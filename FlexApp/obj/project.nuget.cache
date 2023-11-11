@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "j2ER3+mrixz3nnN2GMZ8TrpB4nQH8O7M49Y3XajLZvHg9IBqQDe3fCEY/OmhmMEBmzFSkk4CFHsnFDJY2Y+Lcg==",
+  "success": true,
+  "projectFilePath": "D:\\Studia\\ZPI_Project\\FlexApp\\FlexApp\\FlexApp.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\zyla3\\.nuget\\packages\\microsoft.aspnetcore.spaservices.extensions\\6.0.13\\microsoft.aspnetcore.spaservices.extensions.6.0.13.nupkg.sha512",
+    "C:\\Users\\zyla3\\.nuget\\packages\\microsoft.extensions.fileproviders.abstractions\\6.0.0\\microsoft.extensions.fileproviders.abstractions.6.0.0.nupkg.sha512",
+    "C:\\Users\\zyla3\\.nuget\\packages\\microsoft.extensions.fileproviders.physical\\6.0.0\\microsoft.extensions.fileproviders.physical.6.0.0.nupkg.sha512",
+    "C:\\Users\\zyla3\\.nuget\\packages\\microsoft.extensions.filesystemglobbing\\6.0.0\\microsoft.extensions.filesystemglobbing.6.0.0.nupkg.sha512",
+    "C:\\Users\\zyla3\\.nuget\\packages\\microsoft.extensions.primitives\\6.0.0\\microsoft.extensions.primitives.6.0.0.nupkg.sha512",
+    "C:\\Users\\zyla3\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
