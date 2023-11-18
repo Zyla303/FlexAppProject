@@ -1,5 +1,11 @@
+using FlexApp;
+using FlexApp.Models;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Headers;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +13,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSpaStaticFiles(configuration => {
+// Register the DbContext
+builder.Services.AddDbContext<DatabaseContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+builder.Services.AddSpaStaticFiles(configuration =>
+{
     configuration.RootPath = "clientapp/dist";
 });
 
@@ -17,7 +30,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -48,7 +60,8 @@ else
     app.Map(new PathString(spaPath), client =>
     {
         client.UseSpaStaticFiles();
-        client.UseSpa(spa => {
+        client.UseSpa(spa =>
+        {
             spa.Options.SourcePath = "clientapp";
 
             // adds no-store header to index page to prevent deployment issues (prevent linking to old .js files)
@@ -70,5 +83,13 @@ else
     });
 }
 
+// Ensure the database is created and apply any pending migrations
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var dbContext = services.GetRequiredService<DatabaseContext>();
+    dbContext.Database.EnsureCreated();
+    // You can also apply any pending migrations here using dbContext.Database.Migrate();
+}
 
 app.Run();

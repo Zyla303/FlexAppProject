@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Studia\\ZPI_Project\\FlexApp\\FlexApp\\FlexApp.csproj": {}
+    "D:\\Studia\\ZPI_Project\\FlexApp\\FlexAppProject\\FlexApp\\FlexApp.csproj": {}
   },
   "projects": {
-    "D:\\Studia\\ZPI_Project\\FlexApp\\FlexApp\\FlexApp.csproj": {
+    "D:\\Studia\\ZPI_Project\\FlexApp\\FlexAppProject\\FlexApp\\FlexApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Studia\\ZPI_Project\\FlexApp\\FlexApp\\FlexApp.csproj",
+        "projectUniqueName": "D:\\Studia\\ZPI_Project\\FlexApp\\FlexAppProject\\FlexApp\\FlexApp.csproj",
         "projectName": "FlexApp",
-        "projectPath": "D:\\Studia\\ZPI_Project\\FlexApp\\FlexApp\\FlexApp.csproj",
+        "projectPath": "D:\\Studia\\ZPI_Project\\FlexApp\\FlexAppProject\\FlexApp\\FlexApp.csproj",
         "packagesPath": "C:\\Users\\zyla3\\.nuget\\packages\\",
-        "outputPath": "D:\\Studia\\ZPI_Project\\FlexApp\\FlexApp\\obj\\",
+        "outputPath": "D:\\Studia\\ZPI_Project\\FlexApp\\FlexAppProject\\FlexApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\DevExpress 21.2\\Components\\Offline Packages",
@@ -48,9 +48,21 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "EntityFramework": {
+              "target": "Package",
+              "version": "[6.4.4, )"
+            },
             "Microsoft.AspNetCore.SpaServices.Extensions": {
               "target": "Package",
               "version": "[6.0.13, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[7.0.14, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[7.0.14, )"
             }
           },
           "imports": [
