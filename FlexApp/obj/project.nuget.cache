@@ -1,12 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "T6wR5ikrqcI7laDxA6fuu2fSXbb9txlufd5a+qJLQa6A8QU0gcWUNFB/pUrfX0w40wFNYPwcxJda6CvoIK9b+A==",
+  "dgSpecHash": "U2Itz3H9mO1ccCDH6KPohZmFNYrQi3dOUixNx9kcogjwMXAvKTMVb+gRJwO0iV+6qD4GKun7AWxUFXSGQLrlIA==",
   "success": true,
   "projectFilePath": "D:\\Studia\\ZPI_Project\\FlexApp\\FlexAppProject\\FlexApp\\FlexApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\zyla3\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\zyla3\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",
     "C:\\Users\\zyla3\\.nuget\\packages\\entityframework\\6.4.4\\entityframework.6.4.4.nupkg.sha512",
+    "C:\\Users\\zyla3\\.nuget\\packages\\microsoft.aspnetcore.http.abstractions\\2.2.0\\microsoft.aspnetcore.http.abstractions.2.2.0.nupkg.sha512",
+    "C:\\Users\\zyla3\\.nuget\\packages\\microsoft.aspnetcore.http.features\\2.2.0\\microsoft.aspnetcore.http.features.2.2.0.nupkg.sha512",
     "C:\\Users\\zyla3\\.nuget\\packages\\microsoft.aspnetcore.spaservices.extensions\\6.0.13\\microsoft.aspnetcore.spaservices.extensions.6.0.13.nupkg.sha512",
     "C:\\Users\\zyla3\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\1.1.1\\microsoft.bcl.asyncinterfaces.1.1.1.nupkg.sha512",
     "C:\\Users\\zyla3\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
