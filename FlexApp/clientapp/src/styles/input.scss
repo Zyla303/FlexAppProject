@@ -1,0 +1,88 @@
+@import './variables.scss';
+
+.input {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 0.3em 1em;
+    overflow: hidden;
+
+    // input::placeholder,
+    // textarea::placeholder {
+    //     color: rgba($theme, 0.5);
+    // }
+
+    &.underline {
+        border-bottom: 2px solid $theme;
+        border-radius: 0.5em 0.5em 0 0;
+    }
+    &.full, &.textarea-container {
+        border: 1px solid $theme;
+        border-radius: 20px;
+    }
+
+    &:hover {
+        background-color: rgba($theme, 0.03);  
+        // border-color: $material-gray-6;
+        
+        // svg {
+        //     color: $material-gray-6; 
+        // }
+        // input::placeholder,
+        // textarea::placeholder {
+        //     color: $material-gray-6;
+        // }
+    }
+
+    &:focus-within {
+        background-color: rgba($theme, 0.1);  
+        border-color: $theme;
+        svg {
+            color: $theme;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: rgba($theme, 0.8);
+        }
+    }
+
+    svg {
+        position: absolute;
+        pointer-events: none;
+        width: 1.1em;
+        height: 1.1em;
+        padding-left: 0.2em;
+        color: $theme;  
+    }
+
+    input, textarea {
+        border: none;
+        outline: none;
+        color: $theme;
+        font-family: 'Lato', sans-serif;
+        font-size: 16px;
+        width: 100%;
+        resize: none;
+        padding: 0.5em 0;
+        &.icon {
+            padding: 0.5em 0 0.5em 2em;
+        }
+        &.no-icon {
+            padding: 0.5em 0;
+        }
+        background-color: transparent;
+
+        &::placeholder {
+            color: rgba($theme, 0.7);
+        }
+
+        &:focus {
+            color: $theme;
+        }
+    }
+    textarea {
+        height: 5em;
+    }
+}

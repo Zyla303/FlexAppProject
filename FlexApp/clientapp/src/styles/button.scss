@@ -1,0 +1,51 @@
+@import './variables';
+
+.button {
+    text-decoration: none;
+    border: none;
+    border-radius: 20px;
+    backface-visibility: hidden;
+    // box-shadow: 4px 4px 4px rgba(0,0,0,0.1);
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    padding: 0.5em 2em;
+    height: 2.5em;
+
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    transform-style: preserve-3d;
+    will-change: transform;
+    z-index: 1;
+    cursor: pointer;
+
+    // background: linear-gradient(135deg, $theme-secondary 0%, $theme 100%);
+
+}
+
+.button-mask {
+    position: absolute;
+    transition: transform 0.3s ease-in-out;
+    z-index: -1;
+}
+
+.slides-right {
+    right: 0;
+}
+
+.button-slides {
+    top: 0;
+    width: 200%;
+    height: 100%;
+}
+
+.gradient-background {
+    background: linear-gradient(135deg, $theme-secondary 0%, $theme 100%);
+}
+
+.button:hover .button-mask.slides-right,
+.button:active .button-mask.slides-right {
+// .button:focus .button-mask.slides-right {
+    transform: translate3d(50%, 0, 0);
+}
