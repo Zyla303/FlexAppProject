@@ -1,21 +1,15 @@
 import { FC } from 'react';
-import { Route, Routes } from 'react-router-dom';
 import { LoginPage } from './pages/LoginPage';
 import { HomePage } from './pages/HomePage';
 import './styles/app.scss'
+import { useAppContext } from './context/useAppContext';
 
 export const App: FC = () => {
-
-    const isAuthenticated = false;
+    const {loggedUserData} = useAppContext();
 
     return (
         <div className='useless-app-div'>
-            <Routes>
-                <Route
-                    path='/'
-                    element={isAuthenticated ? <HomePage/> : <LoginPage/>}
-                />
-            </Routes>
+            {loggedUserData ? <HomePage/> : <LoginPage/>}
         </div>
     )
 }

@@ -1,0 +1,32 @@
+@import './variables.scss';
+
+.status-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5em;
+    gap: 1em;
+    border-radius: 1em;
+    cursor: default;
+
+    svg {
+        font-size: 2em;
+    }
+
+    p {
+        flex: 1;
+        display: flex;
+        text-align: center;
+        align-items: center;
+        margin: 0;
+    }
+    &.success {
+        background-color: rgba($success, 0.1);
+        color: $success;
+    }
+
+    &.error {
+        background-color: rgba($error, 0.1);
+        color: $error;
+    }
+}

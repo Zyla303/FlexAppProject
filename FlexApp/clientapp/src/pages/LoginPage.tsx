@@ -6,6 +6,7 @@ import { Input } from '../components/Input';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faKey, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '../components/Button';
+import { useAppContext } from '../context/useAppContext';
 
 interface LoginFormValues {
     username: string;
@@ -15,6 +16,11 @@ interface LoginFormValues {
 export const LoginPage: FC = () => {
 
     const { register, handleSubmit } = useForm<LoginFormValues>();
+    const {authenticateUser} = useAppContext();
+
+    const onSubmit = (data: LoginFormValues) => {
+        authenticateUser({username: data.username});
+    }
 
     return (
         <div className='login-page'>
@@ -23,7 +29,7 @@ export const LoginPage: FC = () => {
                 <h2>Login</h2>
                 <form
                     className='login-form'
-                    onSubmit={handleSubmit((data) => console.log(data))}
+                    onSubmit={handleSubmit(onSubmit)}
                 >
                     <Input
                         label='Username'

@@ -1,15 +1,16 @@
 import { FC, ReactNode } from 'react';
 import '../styles/card.scss'
 
-interface CardProps {
+export interface CardProps {
     children: ReactNode;
     className?: string;
+    onClick?: () => void;
 }
 
-export const Card: FC<CardProps> = ({children, className}) => {
+export const Card: FC<CardProps> = ({children, className, onClick}) => {
 
     return (
-        <div className={`card ${className || ''}`}>
+        <div className={`card ${className ? className : ''}`} onClick={onClick}>
             {children}
         </div>
     )

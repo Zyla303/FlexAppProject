@@ -1,0 +1,51 @@
+@import './variables.scss';
+
+
+.navigation {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.go-back-navigation {
+    color: $theme;
+    cursor: pointer;
+    display: flex;
+    gap: 0.5em;
+    padding-left: 1.5em;
+    padding-right: 1.5em;
+    svg {
+        font-size: 1.25em;
+    }
+}
+
+.profile-groups-navigation {
+    // gap: 1.5em;
+    padding: 0em 2em;
+    
+    .profile-groups-navigation-option {
+        color: $theme;
+        cursor: pointer;
+        height: 1.5em;
+        display: flex;
+        align-items: center;
+    
+        &:first-of-type {
+            padding-right: 1.5em;
+            border-right: 2px rgba($theme, 0.5) solid;
+        }
+        &:last-of-type {
+            padding-left: 1.5em;
+            // border-right: 2px rgba($theme, 0.5) solid;
+        }
+
+        p {
+            padding: 0.1em 0.5em;
+        }
+        &.choice {
+            p {
+                border-bottom: 2px rgba($theme, 0.5) solid;
+            }
+        }
+    }
+}

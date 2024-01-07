@@ -1,0 +1,84 @@
+@import './variables.scss';
+
+
+.profile-content {
+    min-width: 40em;
+    padding: 2em 0;
+
+    .left-side,
+    .right-side {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .left-side {
+        .name-logout-container{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+
+            p {
+                font-size: 1.5em;
+                margin: 0;
+                color: $theme;
+            }
+
+            .button {
+                font-size: 0.8em;
+            }
+        }
+    }
+
+    .right-side {
+        border-left: 2px rgba($theme, 0.25) solid;
+        gap: 1em;
+        p {
+            font-size: 1.25em;
+            margin: 0;
+            color: $theme;
+            margin-top: 0.5em;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5em;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+        .input {
+            width: 75%;
+            &:first-of-type,
+            &:last-of-type {
+                margin-bottom: 1em;
+            }
+        }
+    }
+}
+
+.profile-pic-container {
+    width: 10em;
+    height: 10em;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .profile-pic {
+        width: 100%;  // Ustawia szerokość obrazu na 100% kontenera
+        height: 100%; // Ustawia wysokość obrazu na 100% kontenera
+        object-fit: cover;  // Utrzymuje proporcje, ale może przyciąć obraz
+        border-radius: 50%; // Dodatkowe zabezpieczenie, aby obraz był okrągły
+        box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.5); // Dodaje cień
+
+        // @media (min-aspect-ratio: 1/1) {
+        // object-fit: contain; // Dla obrazów szerszych niż wysokie
+        // }
+    }
+}

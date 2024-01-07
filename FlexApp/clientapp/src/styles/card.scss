@@ -1,3 +1,5 @@
+@import './variables.scss';
+
 .card {
     background-color: white;
     border-radius: 1rem;
@@ -5,6 +7,34 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 1em;
-    box-shadow: 4px 4px 4px rgba(0, 0, 0, .15)
+    padding: 0 1em;
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, .15);
+    min-height: 4.375em;
+
+    &:has(.expandable-card-header) {
+        flex-direction: column;
+    }
+
+    .expandable-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: start;
+        padding: 1.5em;
+        gap: 0.5em;
+        align-self: flex-start;
+        color: $theme;
+
+        cursor: pointer;
+        p {
+            margin: 0;
+        }
+        svg {
+            font-weight: 1000;
+        }
+    }
+
+    .expandable-card-content {
+        padding-bottom: 1.5em;
+        // align-self: stretch;
+    }
 }

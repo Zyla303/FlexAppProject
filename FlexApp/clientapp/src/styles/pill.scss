@@ -1,0 +1,18 @@
+@import './variables.scss';
+
+.pill {
+    background-color: rgba($theme, 0.1);
+    color: $theme;
+    cursor: default;
+    padding: 0.15em 1em;
+    max-width: 10em;
+    border-radius: 1em;
+
+    p {
+        // max-width: 10em;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
