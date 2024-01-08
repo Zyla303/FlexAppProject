@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import { Card, CardProps } from './Card';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+//import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import '../styles/card.scss';
 
 interface ExpandableCardProps extends CardProps {
@@ -23,10 +23,10 @@ export const ExpandableCard: FC<ExpandableCardProps> = ({header, className, card
                 onClick={() => setIsExpanded(!isExpanded)}
             >
                 <p>{header}</p>
-                {isExpanded 
-                    ? <FontAwesomeIcon icon={faChevronUp}/> 
-                    : <FontAwesomeIcon icon={faChevronDown}/>
-                }
+                {/*{isExpanded */}
+                {/*    ? <FontAwesomeIcon icon={faChevronUp}/> */}
+                {/*    : <FontAwesomeIcon icon={faChevronDown}/>*/}
+                {/*}*/}
             </div>
             {isExpanded && (
                 <div className={`expandable-card-content ${className}`}>

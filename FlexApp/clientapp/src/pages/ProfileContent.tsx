@@ -3,7 +3,7 @@ import { Card } from '../components/Card';
 // TODO zdjecie jest na sztywno wrzucone, jak nie mamy profilowek to trzeba by zmienic tego chlopa na innego
 import profilePic from '../assets/default-profile-pic.png';
 import { useAppContext } from '../context/useAppContext';
-import { useForm } from 'react-hook-form';
+/*import { useForm } from 'react-hook-form';*/
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
 import '../styles/profiles-content.scss';
@@ -17,7 +17,7 @@ interface ChangePasswordFormValues {
 export const ProfileContent: FC  = () => {
 
     const { loggedUserData, deauthenticateUser } = useAppContext();
-    const { register, handleSubmit } = useForm<ChangePasswordFormValues>();
+/*    const { register, handleSubmit } = useForm<ChangePasswordFormValues>();*/
 
     const onSubmit = (data: ChangePasswordFormValues) => {
         // TODO handle changing password
@@ -40,27 +40,27 @@ export const ProfileContent: FC  = () => {
             </div>
             <div className='right-side'>
                 <p>Change your password</p>
-                <form
-                    className='login-form'
-                    onSubmit={handleSubmit(onSubmit)}
-                >
-                    <Input
-                        label='Current password'
-                        type='password'
-                        {...register('currentPassword')}
-                    />
-                    <Input
-                        label='New password'
-                        type='password'
-                        {...register('newPassword')}
-                    />
-                    <Input
-                        label='Repeat new password'
-                        type='password'
-                        {...register('newPasswordRepeated')}
-                    />
-                    <Button label='Change password' />
-                </form>
+                {/*<form*/}
+                {/*    className='login-form'*/}
+                {/*    onSubmit={handleSubmit(onSubmit)}*/}
+                {/*>*/}
+                {/*    <Input*/}
+                {/*        label='Current password'*/}
+                {/*        type='password'*/}
+                {/*        {...register('currentPassword')}*/}
+                {/*    />*/}
+                {/*    <Input*/}
+                {/*        label='New password'*/}
+                {/*        type='password'*/}
+                {/*        {...register('newPassword')}*/}
+                {/*    />*/}
+                {/*    <Input*/}
+                {/*        label='Repeat new password'*/}
+                {/*        type='password'*/}
+                {/*        {...register('newPasswordRepeated')}*/}
+                {/*    />*/}
+                {/*    <Button label='Change password' />*/}
+                {/*</form>*/}
             </div>
         </Card>
     )

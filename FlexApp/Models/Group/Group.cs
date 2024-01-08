@@ -7,6 +7,6 @@ namespace FlexApp.Models
         public Guid CreatedById { get; set; }
         public virtual User CreatedBy { get; set; }
         public string InvitationCode { get; set; }
-
+        
     }
 }

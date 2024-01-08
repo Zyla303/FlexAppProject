@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { useAppContext } from "../context/useAppContext";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAnglesLeft } from '@fortawesome/free-solid-svg-icons';
+//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+//import { faAnglesLeft } from '@fortawesome/free-solid-svg-icons';
 import { Card } from './Card';
 
 export const GoBackNavigation: FC = () => {
@@ -23,7 +23,7 @@ export const GoBackNavigation: FC = () => {
             className='go-back-navigation'
             onClick={() => goBack()}
         >
-            <FontAwesomeIcon icon={faAnglesLeft}/>
+{/*            <FontAwesomeIcon icon={faAnglesLeft}/>*/}
             <p>
                 Go back
             </p>

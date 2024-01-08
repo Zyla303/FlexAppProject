@@ -46,6 +46,39 @@ namespace FlexApp.Controllers
             }
         }
 
+        public IActionResult GetUsersInGroups(Guid GroupId)
+        {
+            try
+            {
+                List<UserViewModel> usersInGroup = new List<UserViewModel>();
+
+                if (GroupId != null)
+                {
+                    var usersInGroupDB = _context.Users.Where(u => _context.UsersInGroups.Any(x => x.GroupId == GroupId));
+                    usersInGroup = usersInGroupDB.Select(x => UserViewModel.ToVM(x)).ToList();
+                }
+
+
+                return Ok(usersInGroup);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        //Tworzenie grupy
+
+        //Dołączanie do grupy
+
+        //Pobieranie informacji o danej grupie
+
+        //Generowanie kodu
+
+        //Usuwanie grupy - tylko dla createdbyid
+
+
+
 
 
     }
