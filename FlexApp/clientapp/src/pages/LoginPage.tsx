@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Logo } from '../components/Logo';
 import { Card } from '../components/Card';
@@ -13,38 +13,92 @@ interface LoginFormValues {
     password: string;
 }
 
+interface RegisterFormValues {
+    username: string;
+    password: string;
+    repeatedPassword: string;
+}
+
 export const LoginPage: FC = () => {
 
-    const { register, handleSubmit } = useForm<LoginFormValues>();
-    const {authenticateUser} = useAppContext();
+    // juz nie mialem nerwow robic inaczej, sorka
+    const [formType, setFormType] = useState<'login' | 'register'>('login');
 
-    const onSubmit = (data: LoginFormValues) => {
+    const { register: loginFormRegister, handleSubmit: loginFormHandleSubmit } = 
+        useForm<LoginFormValues>();
+
+    const {authenticateUser} = useAppContext();
+    const loginOnSubmit = (data: LoginFormValues) => {
         authenticateUser({username: data.username});
     }
+
+
+    const { register: registerFormRegister, handleSubmit: registerFormHandleSubmit } = 
+        useForm<RegisterFormValues>();
+
+    const registerOnSubmit = (data: LoginFormValues) => {
+        console.log(data);
+    }
+
 
     return (
         <div className='login-page'>
             <Logo/>
-            <Card className='login-card'>
-                <h2>Login</h2>
-                <form
-                    className='login-form'
-                    onSubmit={handleSubmit(onSubmit)}
-                >
-                    <Input
-                        label='Username'
-                        icon={<FontAwesomeIcon icon={faUser}/>}
-                        {...register('username')}
-                    />
-                    <Input
-                        label='Password'
-                        type='password'
-                        icon={<FontAwesomeIcon icon={faKey}/>}
-                        {...register('password')}
-                    />
-                    <Button label='Login' />
-                </form>
-            </Card>
+
+            {formType === 'login' && (
+                <Card className='login-card'>
+                    <h2>Login</h2>
+                    <form
+                        className='login-form'
+                        onSubmit={loginFormHandleSubmit(loginOnSubmit)}
+                    >
+                        <Input
+                            label='Username'
+                            icon={<FontAwesomeIcon icon={faUser}/>}
+                            {...loginFormRegister('username')}
+                        />
+                        <Input
+                            label='Password'
+                            type='password'
+                            icon={<FontAwesomeIcon icon={faKey}/>}
+                            {...loginFormRegister('password')}
+                        />
+                        <u onClick={() => setFormType('register')}>Register now</u>
+                        <Button label='Login'/>
+                    </form>
+                </Card>
+            )}
+
+            {formType === 'register' && (
+                <Card className='register-card'>
+                    <h2>Register</h2>
+                    <form
+                        className='register-form'
+                        onSubmit={registerFormHandleSubmit(registerOnSubmit)}
+                    >
+                        <Input
+                            label='Username'
+                            icon={<FontAwesomeIcon icon={faUser}/>}
+                            {...registerFormRegister('username')}
+                        />
+                        <Input
+                            label='Password'
+                            type='password'
+                            icon={<FontAwesomeIcon icon={faKey}/>}
+                            {...registerFormRegister('password')}
+                        />
+                        <Input
+                            label='Repeat password'
+                            type='password'
+                            icon={<FontAwesomeIcon icon={faKey}/>}
+                            {...registerFormRegister('repeatedPassword')}
+                        />
+                        <u onClick={() => setFormType('login')}>Already have an account? Login</u>
+                        <Button label='Register' />
+                    </form>
+                </Card>
+            )}
+            
         </div>
     )
 }
