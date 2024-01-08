@@ -1,5 +1,7 @@
 ﻿using FlexApp.Models;
 using FlexApp.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlexApp.Controllers
@@ -10,13 +12,19 @@ namespace FlexApp.Controllers
     {
         private IConfiguration _configuration;
         private DatabaseContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
 
         public AppController(
             IConfiguration configuration,
-            DatabaseContext context) 
+            DatabaseContext context,
+            UserManager<IdentityUser> userManager, 
+            SignInManager<IdentityUser> signInManager) 
         {
             _configuration = configuration;
             _context = context;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         public int NumbOfUsers()
@@ -29,24 +37,22 @@ namespace FlexApp.Controllers
         //Logowanie - przykładowe endpointy do uzupełnienia W KAŻDEJ FUNKCJI
         [HttpGet]
         [Route("Login")]
-        public IActionResult CheckUserEmailAndPassword(string email, string password)
+        public async Task<IActionResult> CheckUserEmailAndPassword(string email, string password)
         {
             try
             {
-                Guid result = new Guid();
-                var user = new User();
-
-                if (!string.IsNullOrEmpty(email))
-                {
-                    user = _context.Users.Where(x => x.Email == email && x.Password == password).FirstOrDefault();
-                }
-
+                var user = await _userManager.FindByEmailAsync(email);
                 if (user != null)
                 {
-                    result = user.Id;
+                    var result = await _signInManager.PasswordSignInAsync(user, password, isPersistent: true, lockoutOnFailure: false);
+                    if (result.Succeeded)
+                    {
+                        // Użytkownik jest zalogowany, plik cookie sesji został utworzony.
+                        return Ok(user.Id);
+                    }
                 }
 
-                return Ok(result);
+                return BadRequest("Nieudane logowanie.");
             }
             catch (Exception ex)
             {
@@ -54,22 +60,40 @@ namespace FlexApp.Controllers
             }
         }
 
+        //Wylogowanie
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return Ok();
+        }
+
+        //Pobieranie obecnie zalogowanego usera
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetCurrentUserId()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return Ok(user?.Id);
+        }
+
         //Rejestracja
-        public IActionResult RegisterNewUser(string name, string email, string password)
+        public IActionResult RegisterNewUser(string name, string password)
         {
             try
             {
                 User user = new User();
-                if(name != null && email != null && password != null)
+                if(name != null && password != null)
                 {
                     user.Name = name;
-                    user.Email = email;
+                    user.Email = "";
                     user.Password = password;
                     user.EmailConfirmed = "true"; // Pola potwierdzenia emaila i hasła, niepotrzebne ale już w bazie
                     user.PasswordConfirmed = "true"; // Pola potwierdzenia emaila i hasła, niepotrzebne ale już w bazie
                     
                     //Sprawdzenie czy user istnieje w bazie
-                    var checkUser = _context.Users.Where(x=>x.Email == email).FirstOrDefault();
+                    var checkUser = _context.Users.Where(x=>x.Email == name).FirstOrDefault();
                     if(checkUser == null) { 
                         _context.Users.Add(user);
                         _context.SaveChanges();
@@ -114,11 +138,11 @@ namespace FlexApp.Controllers
         }
 
         //Zmiana hasła
-        public IActionResult GetUserInformations(string Email, string Name, string NewPassword)
+        public IActionResult ChangeUserPassword(string Name, string NewPassword)
         {
             try
             {
-                var userInfo = _context.Users.Where(x=>x.Email.Contains(Email) && x.Name.Contains(Name)).FirstOrDefault();
+                var userInfo = _context.Users.Where(x => x.Name.Contains(Name)).FirstOrDefault();
                 if(userInfo == null)
                 {
                     return BadRequest("Nie istnieje użytkownik o takim emailu lub nazwie");

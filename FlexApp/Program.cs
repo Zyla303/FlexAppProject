@@ -4,9 +4,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Headers;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Net.Http.Headers;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +27,23 @@ builder.Services.AddSpaStaticFiles(configuration =>
     configuration.RootPath = "clientapp/dist";
 });
 
+// Register IHttpContextAccessor
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<DatabaseContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    // Ustawienie wygaœniêcia pliku cookie na 15 minut
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+    options.LoginPath = "/Login"; // Œcie¿ka do Twojego widoku logowania
+    options.LogoutPath = "/Logout"; // Œcie¿ka do Twojego widoku wylogowania
+    options.SlidingExpiration = true; // Odnowienie wygaœniêcia pliku cookie przy aktywnoœci u¿ytkownika
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -38,6 +58,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
@@ -51,7 +72,7 @@ if (app.Environment.IsDevelopment())
     {
         client.UseSpa(spa =>
         {
-            spa.UseProxyToSpaDevelopmentServer("https://localhost:5312");
+            spa.UseProxyToSpaDevelopmentServer("http://localhost:5312");
         });
     });
 }
@@ -63,9 +84,6 @@ else
         client.UseSpa(spa =>
         {
             spa.Options.SourcePath = "clientapp";
-
-            // adds no-store header to index page to prevent deployment issues (prevent linking to old .js files)
-            // .js and other static resources are still cached by the browser
             spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
             {
                 OnPrepareResponse = ctx =>
@@ -83,13 +101,14 @@ else
     });
 }
 
-// Ensure the database is created and apply any pending migrations
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var dbContext = services.GetRequiredService<DatabaseContext>();
+    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+    var signInManager = services.GetRequiredService<SignInManager<IdentityUser>>();
     dbContext.Database.EnsureCreated();
-    // You can also apply any pending migrations here using dbContext.Database.Migrate();
+    //dbContext.Database.Migrate();
 }
 
 app.Run();

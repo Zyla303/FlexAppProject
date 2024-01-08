@@ -184,3 +184,9 @@ D:\Studia\ZPI_Project\FlexApp\FlexAppProject\FlexApp\obj\Debug\net6.0\refint\Fle
 D:\Studia\ZPI_Project\FlexApp\FlexAppProject\FlexApp\obj\Debug\net6.0\FlexApp.pdb
 D:\Studia\ZPI_Project\FlexApp\FlexAppProject\FlexApp\obj\Debug\net6.0\FlexApp.genruntimeconfig.cache
 D:\Studia\ZPI_Project\FlexApp\FlexAppProject\FlexApp\obj\Debug\net6.0\ref\FlexApp.dll
+D:\Studia\ZPI_Project\FlexApp\FlexAppProject\FlexApp\bin\Debug\net6.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+D:\Studia\ZPI_Project\FlexApp\FlexAppProject\FlexApp\bin\Debug\net6.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+D:\Studia\ZPI_Project\FlexApp\FlexAppProject\FlexApp\bin\Debug\net6.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+D:\Studia\ZPI_Project\FlexApp\FlexAppProject\FlexApp\bin\Debug\net6.0\Microsoft.Extensions.Identity.Core.dll
+D:\Studia\ZPI_Project\FlexApp\FlexAppProject\FlexApp\bin\Debug\net6.0\Microsoft.Extensions.Identity.Stores.dll
+D:\Studia\ZPI_Project\FlexApp\FlexAppProject\FlexApp\bin\Debug\net6.0\Newtonsoft.Json.dll

@@ -1,10 +1,10 @@
 import { FC } from 'react';
-/*import { useForm } from 'react-hook-form';*/
+import { useForm } from 'react-hook-form';
 import { Logo } from '../components/Logo';
 import { Card } from '../components/Card';
 import { Input } from '../components/Input';
-//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-//import { faKey, faUser } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faKey, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '../components/Button';
 import { useAppContext } from '../context/useAppContext';
 
@@ -15,7 +15,7 @@ interface LoginFormValues {
 
 export const LoginPage: FC = () => {
 
-    /*const { register, handleSubmit } = useForm<LoginFormValues>();*/
+    const { register, handleSubmit } = useForm<LoginFormValues>();
     const {authenticateUser} = useAppContext();
 
     const onSubmit = (data: LoginFormValues) => {
@@ -27,23 +27,23 @@ export const LoginPage: FC = () => {
             <Logo/>
             <Card className='login-card'>
                 <h2>Login</h2>
-                {/*<form*/}
-                {/*    className='login-form'*/}
-                {/*    onSubmit={handleSubmit(onSubmit)}*/}
-                {/*>*/}
-                {/*    <Input*/}
-                {/*        label='Username'*/}
-                {/*        icon={<FontAwesomeIcon icon={faUser}/>}*/}
-                {/*        {...register('username')}*/}
-                {/*    />*/}
-                {/*    <Input*/}
-                {/*        label='Password'*/}
-                {/*        type='password'*/}
-                {/*        icon={<FontAwesomeIcon icon={faKey}/>}*/}
-                {/*        {...register('password')}*/}
-                {/*    />*/}
-                {/*    <Button label='Login' />*/}
-                {/*</form>*/}
+                <form
+                    className='login-form'
+                    onSubmit={handleSubmit(onSubmit)}
+                >
+                    <Input
+                        label='Username'
+                        icon={<FontAwesomeIcon icon={faUser}/>}
+                        {...register('username')}
+                    />
+                    <Input
+                        label='Password'
+                        type='password'
+                        icon={<FontAwesomeIcon icon={faKey}/>}
+                        {...register('password')}
+                    />
+                    <Button label='Login' />
+                </form>
             </Card>
         </div>
     )

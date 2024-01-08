@@ -16,11 +16,11 @@ export const ParticularGroupContent: FC = () => {
             <Card
                 className='particular-group-top-panel'
             >
-                {/* <div className='group-title'> */}
+                 <div className='group-title'> 
                     <p title='Group name too long to display lorem ipsum'>
                         Group name too long to display lorem ipsum
                     </p>
-                {/* </div> */}
+                 </div> 
                 <div className='button-container'>
                     <Button label="Generate code"/>
                     <Button label="Remove group"/>

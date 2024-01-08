@@ -7,7 +7,7 @@ export default defineConfig({
     base: '/',
     server: {
         https: true,
-        port: 5313
+        port: 5312
     },
     plugins: [react(), mkcert()],
 })
