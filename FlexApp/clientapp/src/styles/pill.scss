@@ -7,12 +7,59 @@
     padding: 0.15em 1em;
     max-width: 10em;
     border-radius: 1em;
+    // box-shadow: 3px 3px 3px #00000010;
 
     p {
-        // max-width: 10em;
         margin: 0;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+    &.with-photo {
+
+        max-width: 15em;
+        height: 5em;
+        overflow-y: hidden;
+
+        display: flex;
+        align-items: center;
+        justify-content: right;
+        padding: 0.5em;
+        padding-left: 1em;
+        // box-shadow: 3px 3px 3px #00000015;
+
+        p {
+            white-space: wrap;
+            text-align: center;
+            margin-right: 0.5em
+        }
+    }
+
+    .img-container {
+        width: 4.5em;
+        height: 4.5em;
+        border-radius: 1.5em;
+        border: 2px solid white;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        img {
+            // position: absolute;
+            // left: -1000%;
+            // right: -1000%;
+            // top: -1000%;
+            // bottom: -1000%;
+            // margin: auto;
+            // width: 95%;
+            // height: 95%;
+            width: 100%;  // Ustawia szerokość obrazu na 100% kontenera
+            height: 100%; // Ustawia wysokość obrazu na 100% kontenera
+            object-fit: cover;  // Utrzymuje proporcje, ale może przyciąć obraz
+            border-radius: 0.25em; // Dodatkowe zabezpieczenie, aby obraz był okrągły
+            box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.5); // Dodaje cień
+        }
     }
 }

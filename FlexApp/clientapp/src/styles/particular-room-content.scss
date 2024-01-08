@@ -1,0 +1,45 @@
+// @import './variables.scss';
+
+// .groups-content:has(.particular-room-top-panel) {
+//     grid-template-columns: repeat(2, 1fr);
+
+//     .particular-room-top-panel {
+//         display: flex;
+//         align-items: center;
+//         justify-content: space-between;
+//         padding-left: 2em;
+//         padding-right:2em;
+//         color: $theme;
+//         width: 100%;
+//         flex-wrap: wrap;
+//         grid-column: span 2;
+
+//         .room-title {
+//             flex: 6;
+//             min-width: 0;
+//             display: flex;
+//         }
+
+//         p {
+//             margin: 0;
+//             font-size: 1.25em;
+//             font-weight: 600;
+//             white-space: nowrap;
+//             overflow: hidden;
+//             text-overflow: ellipsis;
+//         }
+
+//         .button-container {
+//             display: flex;
+//             // flex-shrink: 1;
+//             justify-content: flex-end;
+//             flex: 2;
+//             gap: 0.5em;
+//             // flex: 1;
+//             .button {
+//                 font-size: 0.85em;
+//             }
+            
+//         }
+//     }
+// }

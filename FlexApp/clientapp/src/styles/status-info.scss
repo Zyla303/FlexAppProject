@@ -13,6 +13,18 @@
         font-size: 2em;
     }
 
+    .messages {
+        display: flex;
+        flex-direction: column;
+        p:first-of-type {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+        p:last-of-type {
+            color: black;
+        }
+    }
+
     p {
         flex: 1;
         display: flex;

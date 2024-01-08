@@ -19,7 +19,7 @@
         width: 20em;
 
         .input {
-            width: calc(100% - 2em); // nie mialem psychy i na sztywno ustawilem
+            width: 100%;
         }
 
         .button-status-container {
@@ -52,17 +52,6 @@
             .pill {
                 cursor: pointer;
             }
-        }
-    }
-
-    .rooms-content {
-        max-width: 40em;
-        display: flex;
-        gap: 0.75em;
-        flex-wrap: wrap;
-
-        .pill {
-            cursor: pointer;
         }
     }
 }

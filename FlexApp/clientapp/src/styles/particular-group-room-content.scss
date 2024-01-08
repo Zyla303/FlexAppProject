@@ -1,0 +1,151 @@
+@import './variables.scss';
+
+// robie has na element ktory na 100% bedzie tylko dla konkretnej grupy, bez tego nietkore style sie nadpisuja dla pozostalych widokow
+.groups-content:has(.particular-group-top-panel) {
+    grid-template-columns: repeat(2, 1fr);
+    .particular-group-top-panel {
+        grid-column: span 2;
+    }
+}
+
+.groups-content:has(.particular-room-top-panel) {
+    grid-template-columns: repeat(1, 1fr);
+}
+
+
+
+.particular-group-top-panel,
+.particular-room-top-panel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 2em;
+    padding-right:2em;
+    color: $theme;
+    width: 100%;
+    flex-wrap: wrap;
+
+    .group-title,
+    .room-title {
+        flex: 6;
+        min-width: 0;
+    }
+
+    .room-title {
+        display: flex;
+
+        p:first-of-type {
+            padding-right: 1em;
+            border-right: 2px rgba($theme, 0.5) solid;
+        }
+        p:last-of-type {
+            padding-left: 1em;
+        }
+    }
+
+    p {
+        margin: 0;
+        font-size: 1.25em;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .button-container {
+        display: flex;
+        // flex-shrink: 1;
+        justify-content: flex-end;
+        flex: 2;
+        gap: 0.5em;
+        // flex: 1;
+        .button {
+            font-size: 0.85em;
+        }
+        
+    }
+}
+
+.group-code-content {
+    .pill {
+        font-size: 1.25em;
+    }
+}
+
+.rooms-card,
+.members-card {
+    grid-column: span 2;
+}
+
+.rooms-content,
+.members-content {
+    max-width: 40em;
+    display: flex;
+    gap: 0.75em;
+    flex-wrap: wrap;
+
+    .pill:not(.with-photo) {
+        cursor: pointer;
+    }
+}
+
+.book-room-panel {
+    max-width: 100%;
+
+    .book-room-form {
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .book-button {
+            margin-top: 1em;
+        }
+
+        .divided-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        
+            .left-side {
+                height: 15em;
+                flex-basis: 50%;
+                padding: 0 2em;
+                border-right: 2px rgba($theme, 0.5) solid;
+
+
+            }
+
+            .right-side {
+                flex-basis: 50%;
+                padding: 0 2em;
+
+            }
+
+            .right-side,
+            .left-side {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 0.75em;
+
+                .input {
+                    width: 100%;
+                }
+
+                p.details-text {
+                    margin: 0;
+                    color: $theme;
+                    font-size: 1em;
+                    font-weight: 600;
+                    text-align: center;
+                }
+
+                .status-info {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
