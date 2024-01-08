@@ -7,8 +7,21 @@ import { Input } from '../components/Input';
 import { StatusInfo } from '../components/StatusInfo';
 import { TextArea } from '../components/TextArea';
 import { ExpandableRow } from '../components/ExpandableRow';
+import { useForm } from 'react-hook-form';
+
+interface BookRoomFormValues {
+    reason: string;
+    description: string;
+    date: string;
+}
 
 export const ParticularRoomContent: FC = () => {
+
+    const { register, handleSubmit } = useForm<BookRoomFormValues>();
+
+    const onSubmit = (data: BookRoomFormValues) => {
+        console.log(data);
+    }
 
     const reservations = [
         {
@@ -67,15 +80,20 @@ export const ParticularRoomContent: FC = () => {
                 defaultState={true}
                 className='book-room-panel'
             >
-                <form className='book-room-form'>
+                <form 
+                    className='book-room-form'
+                    onSubmit={handleSubmit(onSubmit)}
+                >
                     <div className='divided-content'>
                         <div className='left-side'>
                             <p className='details-text'>Give us details about your booking</p>
                             <Input
                                 label="Reason"
+                                {...register('reason')}
                             />
                             <TextArea
                                 label="Description"
+                                {...register('description')}
                             />
                         </div>
 
@@ -83,6 +101,7 @@ export const ParticularRoomContent: FC = () => {
                             <p className='details-text'>Pick a proper date and time for your booking</p>
                             <Input
                                 label='Datepicker placeholder'
+                                {...register('date')}
                             />
                             <StatusInfo
                                 status='error'
