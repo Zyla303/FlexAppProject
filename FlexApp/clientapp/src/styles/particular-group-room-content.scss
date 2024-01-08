@@ -149,3 +149,19 @@
         }
     }
 }
+
+.reservations-panel {
+    // background-color: red;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    // TODO Tu sobie zmiencie na wiecej jak sie informacje nie mieszcza
+    max-width: 41em; 
+    gap: 1em;
+    i {
+        align-self: end;
+        color: $theme;
+        margin-bottom: 0.5em;
+        margin-left: 2em;
+    }
+}

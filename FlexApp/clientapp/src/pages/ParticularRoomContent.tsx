@@ -6,8 +6,30 @@ import { ExpandableCard } from '../components/ExpandableCard';
 import { Input } from '../components/Input';
 import { StatusInfo } from '../components/StatusInfo';
 import { TextArea } from '../components/TextArea';
+import { ExpandableRow } from '../components/ExpandableRow';
 
 export const ParticularRoomContent: FC = () => {
+
+    const reservations = [
+        {
+            date: '03.03.2024',
+            name: 'May Loush',
+            reason: 'Short reason',
+            description: "Short description"
+        },
+        {
+            date: '03.03.2024',
+            name: 'May Loush',
+            reason: 'Longer reason dolor sit amet some other very important stuff',
+            description: "Very long description dolor sir amet lorem ipsum one day i will be an astronaut"
+        },
+        {
+            date: '03.03.2024',
+            name: 'May Loush',
+            reason: 'Longer reason dolor sit amet some other very important stuff',
+            description: "Very long description dolor sir amet lorem ipsum one day i will be an astronaut"
+        }
+    ]
 
     return (
         <>
@@ -26,6 +48,19 @@ export const ParticularRoomContent: FC = () => {
                     <Button label="Remove group"/>
                 </div>
             </Card>
+            
+            <ExpandableCard
+                header="Reservations"
+                defaultState={true}
+                className='reservations-panel'
+            >
+                <i>Click to view full information</i>
+                {reservations.map(reservation => (
+                    <ExpandableRow
+                        {...reservation}
+                    />
+                ))}
+            </ExpandableCard>
 
             <ExpandableCard
                 header="Book"
@@ -39,11 +74,6 @@ export const ParticularRoomContent: FC = () => {
                             <Input
                                 label="Reason"
                             />
-                            {/* <Input
-                                // XD sorki nie moglem sie powstrzymac
-                                className='big-input'
-                                label="Description"
-                            /> */}
                             <TextArea
                                 label="Description"
                             />
