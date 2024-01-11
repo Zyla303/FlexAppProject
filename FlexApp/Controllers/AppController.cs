@@ -29,7 +29,7 @@ namespace FlexApp.Controllers
         }
 
         // Logowanie
-        [HttpPost("Login")]
+        [HttpPost("Login")] //TODO naprawić
         public async Task<IActionResult> Login(string userName, string password)
         {
             try
@@ -54,7 +54,7 @@ namespace FlexApp.Controllers
         }
 
         // Rejestracja
-        [HttpPost("Register")] //TODO naprawić
+        [HttpPost("Register")] 
         public IActionResult RegisterNewUser(string userName, string firstName, string lastName, string password)
         {
             try
