@@ -11,13 +11,12 @@
 using System;
 using System.Reflection;
 
-[assembly: Microsoft.AspNetCore.Identity.UI.UIFrameworkAttribute("Bootstrap5")]
-[assembly: System.Reflection.AssemblyCompanyAttribute("FlexApp")]
-[assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyCompanyAttribute("FlexApp - Backup")]
+[assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2983f2ac3128b089a0a64c01d9e63df5c9ecca47")]
-[assembly: System.Reflection.AssemblyProductAttribute("FlexApp")]
-[assembly: System.Reflection.AssemblyTitleAttribute("FlexApp")]
+[assembly: System.Reflection.AssemblyProductAttribute("FlexApp - Backup")]
+[assembly: System.Reflection.AssemblyTitleAttribute("FlexApp - Backup")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
 
 // Wygenerowane przez klasę WriteCodeFragment programu MSBuild.

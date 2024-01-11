@@ -3,6 +3,7 @@ using FlexApp.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace FlexApp.Controllers
 {
@@ -27,21 +28,13 @@ namespace FlexApp.Controllers
             _signInManager = signInManager;
         }
 
-        public int NumbOfUsers()
-        {
-            var users = _context.Users.Count();
-
-            return users;
-        }
-
-        //Logowanie - przykładowe endpointy do uzupełnienia W KAŻDEJ FUNKCJI
-        [HttpGet]
-        [Route("Login")]
-        public async Task<IActionResult> CheckUserEmailAndPassword(string email, string password)
+        // Logowanie
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login(string userName, string password)
         {
             try
             {
-                var user = await _userManager.FindByEmailAsync(email);
+                var user = await _userManager.FindByNameAsync(userName);
                 if (user != null)
                 {
                     var result = await _signInManager.PasswordSignInAsync(user, password, isPersistent: true, lockoutOnFailure: false);
@@ -52,7 +45,7 @@ namespace FlexApp.Controllers
                     }
                 }
 
-                return BadRequest("Nieudane logowanie.");
+                return BadRequest("Login failed");
             }
             catch (Exception ex)
             {
@@ -60,51 +53,36 @@ namespace FlexApp.Controllers
             }
         }
 
-        //Wylogowanie
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> Logout()
-        {
-            await _signInManager.SignOutAsync();
-            return Ok();
-        }
-
-        //Pobieranie obecnie zalogowanego usera
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> GetCurrentUserId()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            return Ok(user?.Id);
-        }
-
-        //Rejestracja
-        public IActionResult RegisterNewUser(string name, string password)
+        // Rejestracja
+        [HttpPost("Register")] //TODO naprawić
+        public IActionResult RegisterNewUser(string userName, string firstName, string lastName, string password)
         {
             try
             {
                 User user = new User();
-                if(name != null && password != null)
+                if(userName != null && firstName != null && lastName != null && password != null)
                 {
-                    user.Name = name;
-                    user.Email = "";
+                    user.UserName = userName;
+                    user.FirstName = firstName;
+                    user.LastName = lastName;
                     user.Password = password;
-                    user.EmailConfirmed = "true"; // Pola potwierdzenia emaila i hasła, niepotrzebne ale już w bazie
-                    user.PasswordConfirmed = "true"; // Pola potwierdzenia emaila i hasła, niepotrzebne ale już w bazie
                     
                     //Sprawdzenie czy user istnieje w bazie
-                    var checkUser = _context.Users.Where(x=>x.Email == name).FirstOrDefault();
+                    var checkUser = _context.Users.Where(x=>x.UserName == userName).FirstOrDefault();
                     if(checkUser == null) { 
                         _context.Users.Add(user);
                         _context.SaveChanges();
                     }
                     else
                     {
-                        return BadRequest("Użytkownik istnieje w bazie!");
+                        return BadRequest("User with this username already exists");
                     }
-
                 }
-                //Zwracamy całego usera z jego id, może posłużyć do automatycznego zalogowania po rejestracji - najpierw mapujemy na VM
+                else
+                {
+                    return BadRequest("Invalid input: Username, first name, last name, and password are required");
+                }
+                // Zwracamy całego usera z jego id, może posłużyć do automatycznego zalogowania po rejestracji - najpierw mapujemy na VM
                 var UserVM = UserViewModel.ToVM(user);
                 return Ok(UserVM);
             }
@@ -114,18 +92,19 @@ namespace FlexApp.Controllers
             }
         }
 
-        //Informacje o userze
-        public IActionResult GetUserInformations(Guid UserId)
+        // Informacje o użytkowniku
+        [HttpGet("GetUserInformations/{UserId}")] 
+        public IActionResult GetUserInformations(Guid userId)
         {
             try
             {
                 UserViewModel userVM = new UserViewModel();
-                if (UserId != null)
+                if (userId != Guid.Empty)
                 {
-                    var user = _context.Users.Where(x=>x.Id == UserId).FirstOrDefault();
+                    var user = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
                     if (user == null)
                     {
-                        return BadRequest("Użytkownik nie istnieje");
+                        return BadRequest("User with this ID does not exist");
                     }
                     userVM = UserViewModel.ToVM(user);
                 }
@@ -137,30 +116,51 @@ namespace FlexApp.Controllers
             }
         }
 
-        //Zmiana hasła
-        public IActionResult ChangeUserPassword(string Name, string NewPassword)
+        // Wylogowanie
+        [HttpPost("Logout")] //TODO przetestować (logowanie nie działa)
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return Ok();
+        }
+
+        // Pobieranie ID obecnie zalogowanego użytkownika
+        [HttpGet("GetCurrentUserId")] //TODO przetestować (logowanie nie działa)
+        [Authorize]
+        public async Task<IActionResult> GetCurrentUserId()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return Ok(user?.Id);
+        }
+
+        // Zmiana hasła
+        [HttpPut("ChangeUserPassword")] //TODO przetestować (logowanie nie działa)
+        [Authorize]
+        public IActionResult ChangeUserPassword(Guid userId, string currentPassword, string newPassword)
         {
             try
             {
-                var userInfo = _context.Users.Where(x => x.Name.Contains(Name)).FirstOrDefault();
-                if(userInfo == null)
+                var userInfo = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
+                if (userInfo == null)
                 {
-                    return BadRequest("Nie istnieje użytkownik o takim emailu lub nazwie");
+                    return BadRequest("User with this ID does not exist");
+                }
+                else if (userInfo.Password != currentPassword)
+                {
+                    return BadRequest("Wrong password");
                 }
                 else
                 {
-                    userInfo.Password = NewPassword;
+                    userInfo.Password = newPassword;
                     _context.SaveChanges();
                 }
-                return Ok("Hasło zostało zmienione");
+                return Ok("Password has been changed");
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
-
-
-
     }
 }

@@ -14,19 +14,17 @@ namespace FlexApp.ViewModels
 
         public Guid Id { get; set; }
 
-        [Display(Name = "Nazwa")]
-        public string Name { get; set; }
+        [Display(Name = "Username")]
+        public string UserName { get; set; }
 
-        [Display(Name = "Email")]
-        public string Email { get; set; }
+        [Display(Name = "Imie")]
+        public string FirstName { get; set; }
+
+        [Display(Name = "Nazwisko")]
+        public string LastName { get; set; }
 
         [Display(Name = "Hasło")]
         public string Password { get; set; }
-
-        public string EmailConfirmed { get; set; }
-        public string PasswordConfirmed { get; set; }
-
-
 
         public static UserViewModel ToVM(User model)
         {
@@ -34,24 +32,20 @@ namespace FlexApp.ViewModels
             return new UserViewModel()
             {
                 Id = model.Id,
-                Name = model.Name,
-                Email = model.Email,
+                UserName = model.UserName,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
                 Password = model.Password,
-                EmailConfirmed = model.EmailConfirmed,
-                PasswordConfirmed = model.PasswordConfirmed,
-
             };
         }
 
         public User ToModel(User model)
         {
             model.Id = Id;
-            model.Name = Name;
-            model.Email = Email;
+            model.UserName = UserName;
+            model.FirstName = FirstName;
+            model.LastName = LastName;
             model.Password = Password;
-            model.EmailConfirmed = EmailConfirmed;
-            model.PasswordConfirmed = PasswordConfirmed;
-
             return model;
         }
     }
