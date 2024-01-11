@@ -15,6 +15,8 @@ interface LoginFormValues {
 
 interface RegisterFormValues {
     username: string;
+    firstName: string;
+    lastName: string;
     password: string;
     repeatedPassword: string;
 }
@@ -78,19 +80,24 @@ export const LoginPage: FC = () => {
                     >
                         <Input
                             label='Username'
-                            icon={<FontAwesomeIcon icon={faUser}/>}
                             {...registerFormRegister('username')}
+                        />
+                        <Input
+                            label='First name'
+                            {...registerFormRegister('firstName')}
+                        />
+                        <Input
+                            label='Last name'
+                            {...registerFormRegister('lastName')}
                         />
                         <Input
                             label='Password'
                             type='password'
-                            icon={<FontAwesomeIcon icon={faKey}/>}
                             {...registerFormRegister('password')}
                         />
                         <Input
                             label='Repeat password'
                             type='password'
-                            icon={<FontAwesomeIcon icon={faKey}/>}
                             {...registerFormRegister('repeatedPassword')}
                         />
                         <u onClick={() => setFormType('login')}>Already have an account? Login</u>
