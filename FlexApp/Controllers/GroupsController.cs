@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using FlexApp.Models;
-using System;
 using FlexApp.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FlexApp.Controllers
 {
@@ -14,6 +13,7 @@ namespace FlexApp.Controllers
         private DatabaseContext _context;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+
 
         public GroupsController(IConfiguration configuration, 
             DatabaseContext context,
@@ -31,22 +31,35 @@ namespace FlexApp.Controllers
             return Ok();
         }
 
-        public IActionResult GetLoggedUserGroups()
+        [HttpGet("GetLoggedUserGroups")]
+        [Authorize]
+        public IActionResult GetLoggedUserGroups() //TODO przetestować
         {
             try
             {
                 // Pobieranie ID aktualnie zalogowanego USERA!!!!
                 var userId = _userManager.GetUserId(User);
+                List<GroupViewModel> userGroupsViewModels;
 
-                List<UsersInGroupsViewModel> userGroups = new List<UsersInGroupsViewModel>();
-
-                if (userId != null)
+                if (userId == null)
                 {
-                    var userGroupsFromDB = _context.UsersInGroups.Where(x => x.UserId.ToString() == userId);
-                    userGroups = userGroupsFromDB.Select(x => UsersInGroupsViewModel.ToVM(x)).ToList();
+                    return Unauthorized("User not logged in");
                 }
 
-                return Ok(userGroups);
+                // Zbiera ID grup, do których należy zalogowany użytkownik, na podstawie jego UserID
+                List<Guid> groupsIdList = _context.UsersInGroups
+                                            .Where(x => x.UserId.ToString() == userId)
+                                            .Select(x => x.GroupId)
+                                            .ToList();
+
+                // Pobiera dane grup na podstawie wcześniej zebranych ID grup użytkownika
+                List<Group> userGroups = _context.Groups
+                                            .Where(g => groupsIdList.Contains(g.Id))
+                                            .ToList();
+
+                userGroupsViewModels = userGroups.Select(group => GroupViewModel.ToVM(group)).ToList();
+                return Ok(userGroupsViewModels);
+            
             }
             catch (Exception ex)
             {
@@ -54,56 +67,65 @@ namespace FlexApp.Controllers
             }
         }
 
-        public IActionResult GetUsersInGroups(Guid GroupId)
+        [HttpGet("GetUsersInGroups")] //TODO przetestować
+        [Authorize]
+        public IActionResult GetUsersInGroup(Guid groupId)
         {
             try
             {
-                List<UserViewModel> usersInGroup = new List<UserViewModel>();
+                // Pobieranie użytkowników należących do danej grupy
+                List<Guid> usersIdList = _context.UsersInGroups
+                                          .Where(x => x.GroupId == groupId)
+                                          .Select(x => x.UserId)
+                                          .ToList();
 
-                if (GroupId != null)
-                {
-                    var usersInGroupDB = _context.Users.Where(u => _context.UsersInGroups.Any(x => x.GroupId == GroupId));
-                    usersInGroup = usersInGroupDB.Select(x => UserViewModel.ToVM(x)).ToList();
-                }
+                // Pobiera z bazy danych listę użytkowników, których identyfikatory znajdują się w usersIdList
+                List<User> users = _context.Users
+                                    .Where(u => usersIdList.Contains(u.Id))
+                                    .ToList();
 
-
-                return Ok(usersInGroup);
+                var userViewModels = users.Select(user => UserViewModel.ToVM(user)).ToList();
+                return Ok(userViewModels);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest("An error occurred while retrieving the users in the group.");
             }
         }
 
         //Tworzenie grupy
+        [HttpPost("CreateGroup")] //TODO przetestować
+        [Authorize]
         public IActionResult CreateGroup(string Name)
         {
             try
             {
-                GroupViewModel group = new GroupViewModel();
-                var userId = _userManager.GetUserId(User);
-
-                if (Name != null)
+                if (string.IsNullOrWhiteSpace(Name))
                 {
-                    var checkIfExist = _context.Groups.Where(x=>x.Name == Name).FirstOrDefault();
-
-                    if (checkIfExist != null)
-                    {
-                        return BadRequest("Grupa istnieje");
-
-                    }
-                    else
-                    {
-                        group.Name = Name;
-                        if (Guid.TryParse(userId, out var userGuid))
-                        {
-                            group.CreatedById = userGuid;
-                        }
-                        group.InvitationCode = GenerateInvitationCode();
-
-                    }
+                    return BadRequest("Group name cannot be empty.");
                 }
 
+                var userId = _userManager.GetUserId(User);
+                if (userId == null)
+                {
+                    return Unauthorized("User not logged in.");
+                }
+
+                var checkIfExist = _context.Groups.FirstOrDefault(x => x.Name == Name);
+                if (checkIfExist != null)
+                {
+                    return BadRequest("Group with this name already exists");
+                }
+
+                var group = new Group
+                {
+                    Name = Name,
+                    CreatedById = Guid.TryParse(userId, out var userGuid) ? userGuid : Guid.Empty,
+                    InvitationCode = GenerateInvitationCode()
+                };
+
+                _context.Groups.Add(group);
+                _context.SaveChanges(); // Zapisanie zmian w bazie danych
 
                 return Ok(group);
             }
@@ -114,42 +136,44 @@ namespace FlexApp.Controllers
         }
 
         //Dołączanie do grupy
-        public IActionResult CreateGroup(Guid GroupId, string Code)
+        [HttpPost("JoinGroupWithCode")] //TODO przetestować
+        [Authorize]
+        public IActionResult JoinGroupWithCode(string Code)
         {
             try
             {
-                var userInGroup = new UsersInGroups();
                 var userId = _userManager.GetUserId(User);
-
-                var confCode = _context.Groups.Where(x=>x.Id == GroupId).Select(x=>x.InvitationCode).FirstOrDefault();
-                if (confCode != null && confCode == Code)
+                if (userId == null)
                 {
-                    var alreadyInGroup = _context.UsersInGroups.Where(x => x.UserId.ToString() == userId && x.GroupId == GroupId).FirstOrDefault();
-
-                    if (alreadyInGroup != null)
-                    {
-                        return BadRequest("Użytkownik jest już w grupie");
-                    }
-                    else
-                    {
-                        if (Guid.TryParse(userId, out var userGuid))
-                        {
-                            userInGroup.UserId = userGuid;
-                        }
-                        userInGroup.GroupId = GroupId;
-                        userInGroup.ConfirmParticipation = true;
-
-                        _context.UsersInGroups.Add(userInGroup);
-                        _context.SaveChanges();
-                    }
-                }
-                else
-                {
-                    return BadRequest("Grupa nie istnieje lub podany kod jest błędny");
+                    return Unauthorized("User not logged in");
                 }
 
+                // Znalezienie grupy na podstawie kodu zaproszenia
+                var group = _context.Groups.FirstOrDefault(g => g.InvitationCode == Code);
+                if (group == null)
+                {
+                    return BadRequest("No group found with the provided invitation code");
+                }
 
-                return Ok(userInGroup);
+                // Sprawdzenie, czy użytkownik już należy do grupy
+                var alreadyInGroup = _context.UsersInGroups
+                                             .Any(x => x.UserId.ToString() == userId && x.GroupId == group.Id);
+                if (alreadyInGroup)
+                {
+                    return BadRequest("User is already in the group");
+                }
+
+                // Dodanie użytkownika do grupy
+                var userInGroup = new UsersInGroups
+                {
+                    UserId = Guid.Parse(userId),
+                    GroupId = group.Id
+                };
+
+                _context.UsersInGroups.Add(userInGroup);
+                _context.SaveChanges();
+
+                return Ok(new { message = "User successfully joined the group." });
             }
             catch (Exception ex)
             {
@@ -157,27 +181,62 @@ namespace FlexApp.Controllers
             }
         }
 
-        //Pobieranie informacji o danej grupie
-        public IActionResult CreateGroup(Guid Id)
+        [HttpGet("GetGroupInformations")] //TODO przetestować
+        [Authorize]
+        public IActionResult GetGroupInformations(Guid id)
         {
             try
             {
-                GroupViewModel group = new GroupViewModel();
-
-                var checkIfExist = _context.Groups.Where(x => x.Id == Id).FirstOrDefault();
-
-                if (Id != null)
+                // Sprawdzenie, czy grupa o danym ID istnieje
+                var groupEntity = _context.Groups.FirstOrDefault(x => x.Id == id);
+                if (groupEntity == null)
                 {
-                    return BadRequest("Grupa nie istnieje");
-
-                }
-                else
-                {
-                    group = GroupViewModel.ToVM(checkIfExist);
-
+                    return NotFound("Grupa nie istnieje");
                 }
 
-                return Ok(group);
+                // Konwersja grupy na ViewModel
+                var groupViewModel = GroupViewModel.ToVM(groupEntity);
+
+                return Ok(groupViewModel);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        //Usuwanie grupy - tylko dla createdbyid
+        [HttpDelete("DeleteGroup")] //TODO przetestować
+        [Authorize]
+        public IActionResult DeleteGroup(Guid id)
+        {
+            try
+            {
+                var userId = _userManager.GetUserId(User);
+
+                // Sprawdzenie, czy grupa o danym ID istnieje
+                var group = _context.Groups.FirstOrDefault(x => x.Id == id);
+                if (group == null)
+                {
+                    return NotFound("Grupa nie istnieje");
+                }
+
+                // Sprawdzenie, czy zalogowany użytkownik jest właścicielem grupy
+                if (group.CreatedById.ToString() != userId)
+                {
+                    return BadRequest("Grupę może usunąć tylko właściciel");
+                }
+
+                // Usunięcie wszystkich powiązań użytkowników z grupą
+                var usersInGroups = _context.UsersInGroups.Where(x => x.GroupId == id).ToList();
+                _context.UsersInGroups.RemoveRange(usersInGroups);
+                _context.SaveChanges();
+
+                // Usunięcie grupy
+                _context.Groups.Remove(group);
+                _context.SaveChanges();
+
+                return Ok("Grupa usunięta");
             }
             catch (Exception ex)
             {
@@ -187,6 +246,7 @@ namespace FlexApp.Controllers
 
         //Generowanie kodu
         public string GenerateInvitationCode()
+
         {
             var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             var code = new char[6];
@@ -197,51 +257,7 @@ namespace FlexApp.Controllers
                 code[i] = characters[random.Next(characters.Length)];
             }
 
-            return new String(code);
-        }
-
-
-        //Usuwanie grupy - tylko dla createdbyid
-        public IActionResult DeleteGroup(Guid Id)
-        {
-            try
-            {
-                GroupViewModel group = new GroupViewModel();
-                var userId = _userManager.GetUserId(User);
-
-                var checkIfExist = _context.Groups.Where(x => x.Id == Id).FirstOrDefault();
-
-                if (Id != null)
-                {
-                    return BadRequest("Grupa nie istnieje");
-
-                }
-                else
-                {
-                    if(checkIfExist != null && checkIfExist.CreatedById.ToString() == userId)
-                    {
-                        var usersInGroups = _context.UsersInGroups.Where(x=>x.GroupId == Id).ToList();
-                        
-                        _context.UsersInGroups.RemoveRange(usersInGroups);
-                        _context.SaveChanges();
-
-                        _context.Groups.Remove(checkIfExist);
-                        _context.SaveChanges();
-
-                    }
-                    else
-                    {
-                        return BadRequest("Grupę może usunąć tylko właściciel");
-                    }
-
-                }
-
-                return Ok("Grupa usunięta");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return new string(code);
         }
     }
 }
