@@ -12,14 +12,14 @@ namespace FlexApp.Controllers
     {
         private IConfiguration _configuration;
         private DatabaseContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
 
         public AppController(
             IConfiguration configuration,
             DatabaseContext context,
-            UserManager<IdentityUser> userManager, 
-            SignInManager<IdentityUser> signInManager) 
+            UserManager<User> userManager, 
+            SignInManager<User> signInManager) 
         {
             _configuration = configuration;
             _context = context;
@@ -27,34 +27,40 @@ namespace FlexApp.Controllers
             _signInManager = signInManager;
         }
 
-        // Logowanie
-        [HttpPost("Login")] //TODO naprawić
-        public async Task<IActionResult> Login(string userName, string password)
+        [HttpPost( "Login" )]
+        public async Task<IActionResult> Login( string userName, string password )
         {
             try
             {
-                var user = await _userManager.FindByNameAsync(userName);
-                if (user != null)
+                var user = await _userManager.FindByNameAsync( userName );
+                if(user != null)
                 {
-                    var result = await _signInManager.PasswordSignInAsync(user, password, isPersistent: true, lockoutOnFailure: false);
-                    if (result.Succeeded)
+                    // Weryfikuj hasło
+                    var verificationResult = _userManager.PasswordHasher.VerifyHashedPassword( user, user.PasswordHash, password );
+
+                    if(verificationResult == PasswordVerificationResult.Success)
                     {
-                        // Użytkownik jest zalogowany, plik cookie sesji został utworzony.
-                        return Ok(user.Id);
+                        // Loguj użytkownika bez ponownego hashowania hasła
+                        var result = await _signInManager.PasswordSignInAsync( user.UserName, password, isPersistent: true, lockoutOnFailure: false );
+                        if(result.Succeeded)
+                        {
+                            return Ok( user.Id );
+                        }
                     }
                 }
 
-                return BadRequest("Login failed");
+                return BadRequest( "Login failed" );
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest( ex.Message );
             }
         }
 
-        // Rejestracja
-        [HttpPost("Register")] 
-        public IActionResult RegisterNewUser(string userName, string firstName, string lastName, string password)
+
+        //Rejestracja
+        [HttpPost( "Register" )]
+        public IActionResult RegisterNewUser( string userName, string firstName, string lastName, string password )
         {
             try
             {
@@ -64,32 +70,50 @@ namespace FlexApp.Controllers
                     user.UserName = userName;
                     user.FirstName = firstName;
                     user.LastName = lastName;
-                    user.Password = password;
-                    
-                    //Sprawdzenie czy user istnieje w bazie
-                    var checkUser = _context.Users.Where(x=>x.UserName == userName).FirstOrDefault();
-                    if(checkUser == null) { 
-                        _context.Users.Add(user);
+
+                    var passwordHasher = new PasswordHasher<User>();
+                    user.PasswordHash = passwordHasher.HashPassword( user, password );
+
+                    user.NormalizedUserName = userName.ToUpper();
+                    user.Email = "Empty";
+                    user.NormalizedEmail = user.Email.ToUpper();
+                    user.PhoneNumber = "000000000";
+                    user.EmailConfirmed = true;
+                    user.PhoneNumberConfirmed = true;
+                    user.TwoFactorEnabled = false;
+                    user.LockoutEnabled = true;
+                    user.AccessFailedCount = 0;
+                    user.ConcurrencyStamp = Guid.NewGuid().ToString();
+                    user.SecurityStamp = Guid.NewGuid().ToString();
+
+                    // Sprawdź, czy użytkownik już istnieje
+                    var checkUser = _context.Users.FirstOrDefault( x => x.UserName == userName );
+                    if(checkUser == null)
+                    {
+                        _context.Users.Add( user );
                         _context.SaveChanges();
                     }
                     else
                     {
-                        return BadRequest("User with this username already exists");
+                        return BadRequest( "User with this username already exists" );
                     }
                 }
                 else
                 {
-                    return BadRequest("Invalid input: Username, first name, last name, and password are required");
+                    return BadRequest( "Invalid input: All fields are required" );
                 }
-                // Zwracamy całego usera z jego id, może posłużyć do automatycznego zalogowania po rejestracji - najpierw mapujemy na VM
-                var UserVM = UserViewModel.ToVM(user);
-                return Ok(UserVM);
+
+                var UserVM = UserViewModel.ToVM( user );
+                return Ok( UserVM );
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest( ex.Message );
             }
         }
+
+
+
 
         // Informacje o użytkowniku
         [HttpGet("GetUserInformations/{UserId}")] 
@@ -134,32 +158,42 @@ namespace FlexApp.Controllers
         }
 
         // Zmiana hasła
-        [HttpPut("ChangeUserPassword")] //TODO przetestować (logowanie nie działa)
+        // Zmiana hasła
+        [HttpPut( "ChangeUserPassword" )]
         [Authorize]
-        public IActionResult ChangeUserPassword(Guid userId, string currentPassword, string newPassword)
+        public async Task<IActionResult> ChangeUserPassword( Guid userId, string currentPassword, string newPassword )
         {
             try
             {
-                var userInfo = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
-                if (userInfo == null)
+                var user = await _userManager.FindByIdAsync( userId.ToString() );
+                if(user == null)
                 {
-                    return BadRequest("User with this ID does not exist");
+                    return BadRequest( "User with this ID does not exist" );
                 }
-                else if (userInfo.Password != currentPassword)
+
+                // Sprawdź, czy obecne hasło jest poprawne
+                var passwordVerificationResult = await _userManager.CheckPasswordAsync( user, currentPassword );
+                if(!passwordVerificationResult)
                 {
-                    return BadRequest("Wrong password");
+                    return BadRequest( "Current password is incorrect" );
+                }
+
+                // Zmień hasło
+                var result = await _userManager.ChangePasswordAsync( user, currentPassword, newPassword );
+                if(result.Succeeded)
+                {
+                    return Ok( "Password has been changed successfully" );
                 }
                 else
                 {
-                    userInfo.Password = newPassword;
-                    _context.SaveChanges();
+                    return BadRequest( "An error occurred while changing the password" );
                 }
-                return Ok("Password has been changed");
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest( ex.Message );
             }
         }
+
     }
 }

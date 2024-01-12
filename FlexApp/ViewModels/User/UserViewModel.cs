@@ -23,9 +23,6 @@ namespace FlexApp.ViewModels
         [Display(Name = "Nazwisko")]
         public string LastName { get; set; }
 
-        [Display(Name = "Hasło")]
-        public string Password { get; set; }
-
         public static UserViewModel ToVM(User model)
         {
             if (model == null) return null;
@@ -35,7 +32,6 @@ namespace FlexApp.ViewModels
                 UserName = model.UserName,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                Password = model.Password,
             };
         }
 
@@ -45,7 +41,6 @@ namespace FlexApp.ViewModels
             model.UserName = UserName;
             model.FirstName = FirstName;
             model.LastName = LastName;
-            model.Password = Password;
             return model;
         }
     }

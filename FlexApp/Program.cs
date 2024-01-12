@@ -5,51 +5,51 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Headers;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Net.Http.Headers;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder( args );
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 // Register the DbContext
-builder.Services.AddDbContext<DatabaseContext>(options =>
+builder.Services.AddDbContext<DatabaseContext>( options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+    options.UseSqlServer( builder.Configuration.GetConnectionString( "DefaultConnection" ) );
+} );
 
-builder.Services.AddSpaStaticFiles(configuration =>
+builder.Services.AddSpaStaticFiles( configuration =>
 {
     configuration.RootPath = "clientapp/dist";
-});
+} );
 
 // Register IHttpContextAccessor
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<User, IdentityRole<Guid>>() 
     .AddEntityFrameworkStores<DatabaseContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.ConfigureApplicationCookie(options =>
+
+
+builder.Services.ConfigureApplicationCookie( options =>
 {
     // Ustawienie wygaœniêcia pliku cookie na 15 minut
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+    options.ExpireTimeSpan = TimeSpan.FromMinutes( 15 );
     options.LoginPath = "/Login"; // Œcie¿ka do Twojego widoku logowania
     options.LogoutPath = "/Logout"; // Œcie¿ka do Twojego widoku wylogowania
     options.SlidingExpiration = true; // Odnowienie wygaœniêcia pliku cookie przy aktywnoœci u¿ytkownika
-});
-
+} );
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if(!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler( "/Home/Error" );
     app.UseHsts();
 }
 
@@ -63,25 +63,25 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}" );
 
 var spaPath = "/app";
-if (app.Environment.IsDevelopment())
+if(app.Environment.IsDevelopment())
 {
-    app.MapWhen(y => y.Request.Path.StartsWithSegments(spaPath), client =>
+    app.MapWhen( y => y.Request.Path.StartsWithSegments( spaPath ), client =>
     {
-        client.UseSpa(spa =>
+        client.UseSpa( spa =>
         {
-            spa.UseProxyToSpaDevelopmentServer("http://localhost:5312");
-        });
-    });
+            spa.UseProxyToSpaDevelopmentServer( "http://localhost:5312" );
+        } );
+    } );
 }
 else
 {
-    app.Map(new PathString(spaPath), client =>
+    app.Map( new PathString( spaPath ), client =>
     {
         client.UseSpaStaticFiles();
-        client.UseSpa(spa =>
+        client.UseSpa( spa =>
         {
             spa.Options.SourcePath = "clientapp";
             spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
@@ -97,16 +97,16 @@ else
                     };
                 }
             };
-        });
-    });
+        } );
+    } );
 }
 
-using (var scope = app.Services.CreateScope())
+using(var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var dbContext = services.GetRequiredService<DatabaseContext>();
-    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
-    var signInManager = services.GetRequiredService<SignInManager<IdentityUser>>();
+    var userManager = services.GetRequiredService<UserManager<User>>();
+    var signInManager = services.GetRequiredService<SignInManager<User>>();
     dbContext.Database.EnsureCreated();
     //dbContext.Database.Migrate();
 }
