@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FlexApp.Models
 {
-    [Keyless]
     public class UsersInGroups
     {
 

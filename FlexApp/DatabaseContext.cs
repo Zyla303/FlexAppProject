@@ -15,5 +15,14 @@ namespace FlexApp
         public DbSet<UsersInGroups> UsersInGroups { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Definicja klucza z³o¿onego dla UsersInGroups
+            modelBuilder.Entity<UsersInGroups>()
+                .HasKey(uig => new { uig.UserId, uig.GroupId });
+        }
     }
 }

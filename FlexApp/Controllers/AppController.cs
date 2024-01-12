@@ -28,7 +28,7 @@ namespace FlexApp.Controllers
         }
 
         [HttpPost( "Login" )]
-        public async Task<IActionResult> Login( string userName, string password )
+        public async Task<IActionResult> Login( string userName, string password ) //Działa
         {
             try
             {
@@ -57,9 +57,8 @@ namespace FlexApp.Controllers
             }
         }
 
-
         //Rejestracja
-        [HttpPost( "Register" )]
+        [HttpPost( "Register" )] //Działa
         public IActionResult RegisterNewUser( string userName, string firstName, string lastName, string password )
         {
             try
@@ -112,12 +111,9 @@ namespace FlexApp.Controllers
             }
         }
 
-
-
-
         // Informacje o użytkowniku
         [HttpGet("GetUserInformations/{UserId}")] 
-        public IActionResult GetUserInformations(Guid userId)
+        public IActionResult GetUserInformations(Guid userId)  //Działa
         {
             try
             {
@@ -140,7 +136,7 @@ namespace FlexApp.Controllers
         }
 
         // Wylogowanie
-        [HttpPost("Logout")] //TODO przetestować (logowanie nie działa)
+        [HttpPost("Logout")] //Działa
         [Authorize]
         public async Task<IActionResult> Logout()
         {
@@ -149,7 +145,7 @@ namespace FlexApp.Controllers
         }
 
         // Pobieranie ID obecnie zalogowanego użytkownika
-        [HttpGet("GetCurrentUserId")] //TODO przetestować (logowanie nie działa)
+        [HttpGet("GetCurrentUserId")] //Działa
         [Authorize]
         public async Task<IActionResult> GetCurrentUserId()
         {
@@ -158,10 +154,9 @@ namespace FlexApp.Controllers
         }
 
         // Zmiana hasła
-        // Zmiana hasła
-        [HttpPut( "ChangeUserPassword" )]
+        [HttpPut( "ChangeUserPassword" )] 
         [Authorize]
-        public async Task<IActionResult> ChangeUserPassword( Guid userId, string currentPassword, string newPassword )
+        public async Task<IActionResult> ChangeUserPassword( Guid userId, string currentPassword, string newPassword) //Działa
         {
             try
             {
@@ -186,7 +181,8 @@ namespace FlexApp.Controllers
                 }
                 else
                 {
-                    return BadRequest( "An error occurred while changing the password" );
+                    var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                    return BadRequest($"An error occurred while changing the password: {errors}");
                 }
             }
             catch(Exception ex)
@@ -194,6 +190,5 @@ namespace FlexApp.Controllers
                 return BadRequest( ex.Message );
             }
         }
-
     }
 }

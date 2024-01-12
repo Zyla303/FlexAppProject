@@ -3967,26 +3967,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\zyla3\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\DevExpress 21.2\\Components\\Offline Packages": {},
+    "C:\\Users\\kuba6\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Studia\\ZPI_Project\\FlexApp\\FlexAppProject\\FlexApp\\FlexApp.csproj",
+      "projectUniqueName": "D:\\Zajecia\\ZPI\\Projekt\\FlexAppProject\\FlexApp\\FlexApp.csproj",
       "projectName": "FlexApp",
-      "projectPath": "D:\\Studia\\ZPI_Project\\FlexApp\\FlexAppProject\\FlexApp\\FlexApp.csproj",
-      "packagesPath": "C:\\Users\\zyla3\\.nuget\\packages\\",
-      "outputPath": "D:\\Studia\\ZPI_Project\\FlexApp\\FlexAppProject\\FlexApp\\obj\\",
+      "projectPath": "D:\\Zajecia\\ZPI\\Projekt\\FlexAppProject\\FlexApp\\FlexApp.csproj",
+      "packagesPath": "C:\\Users\\kuba6\\.nuget\\packages\\",
+      "outputPath": "D:\\Zajecia\\ZPI\\Projekt\\FlexAppProject\\FlexApp\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files (x86)\\DevExpress 21.2\\Components\\Offline Packages",
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\zyla3\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\DevExpress 21.2.config",
+        "C:\\Users\\kuba6\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -3994,7 +3991,6 @@
         "net6.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\DevExpress 21.2\\Components\\System\\Components\\Packages": {},
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
@@ -4077,7 +4073,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.403\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101\\RuntimeIdentifierGraph.json"
       }
     }
   }

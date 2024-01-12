@@ -1,24 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using FlexApp.Models;
+﻿using FlexApp.Models;
 using FlexApp.ViewModels;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FlexApp.Controllers
 {
     [Route("workflow/[controller]")]
+    [ApiController]
     public class GroupsController : ControllerBase
     {
         private IConfiguration _configuration;
         private DatabaseContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
 
-
-        public GroupsController(IConfiguration configuration, 
+        public GroupsController(
+            IConfiguration configuration,
             DatabaseContext context,
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+            UserManager<User> userManager,
+            SignInManager<User> signInManager)
         {
             _configuration = configuration;
             _context = context;
@@ -26,19 +27,15 @@ namespace FlexApp.Controllers
             _signInManager = signInManager;
         }
 
-        public IActionResult Index()
-        {
-            return Ok();
-        }
-
         [HttpGet("GetLoggedUserGroups")]
         [Authorize]
-        public IActionResult GetLoggedUserGroups() //TODO przetestować
+        public IActionResult GetLoggedUserGroups() // Działa
         {
             try
             {
                 // Pobieranie ID aktualnie zalogowanego USERA!!!!
                 var userId = _userManager.GetUserId(User);
+
                 List<GroupViewModel> userGroupsViewModels;
 
                 if (userId == null)
@@ -67,7 +64,7 @@ namespace FlexApp.Controllers
             }
         }
 
-        [HttpGet("GetUsersInGroups")] //TODO przetestować
+        [HttpGet("GetUsersInGroups")] // Działa
         [Authorize]
         public IActionResult GetUsersInGroup(Guid groupId)
         {
@@ -94,7 +91,7 @@ namespace FlexApp.Controllers
         }
 
         //Tworzenie grupy
-        [HttpPost("CreateGroup")] //TODO przetestować
+        [HttpPost("CreateGroup")] // Działa
         [Authorize]
         public IActionResult CreateGroup(string Name)
         {
@@ -136,7 +133,7 @@ namespace FlexApp.Controllers
         }
 
         //Dołączanie do grupy
-        [HttpPost("JoinGroupWithCode")] //TODO przetestować
+        [HttpPost("JoinGroupWithCode")] // Działa
         [Authorize]
         public IActionResult JoinGroupWithCode(string Code)
         {
@@ -181,7 +178,7 @@ namespace FlexApp.Controllers
             }
         }
 
-        [HttpGet("GetGroupInformations")] //TODO przetestować
+        [HttpGet("GetGroupInformations")] // Działa
         [Authorize]
         public IActionResult GetGroupInformations(Guid id)
         {
@@ -206,7 +203,7 @@ namespace FlexApp.Controllers
         }
 
         //Usuwanie grupy - tylko dla createdbyid
-        [HttpDelete("DeleteGroup")] //TODO przetestować
+        [HttpDelete("DeleteGroup")] // Działa
         [Authorize]
         public IActionResult DeleteGroup(Guid id)
         {
