@@ -103,7 +103,7 @@ namespace FlexApp.Controllers
                 }
 
                 var UserVM = UserViewModel.ToVM( user );
-                return Ok( UserVM );
+                return Ok( UserVM.Id );
             }
             catch(Exception ex)
             {

@@ -124,7 +124,7 @@ namespace FlexApp.Controllers
                 _context.Groups.Add(group);
                 _context.SaveChanges(); // Zapisanie zmian w bazie danych
 
-                return Ok(group);
+                return Ok(group.Id);
             }
             catch (Exception ex)
             {
@@ -170,7 +170,7 @@ namespace FlexApp.Controllers
                 _context.UsersInGroups.Add(userInGroup);
                 _context.SaveChanges();
 
-                return Ok(new { message = "User successfully joined the group." });
+                return Ok(group.Id);
             }
             catch (Exception ex)
             {

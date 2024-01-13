@@ -78,7 +78,7 @@ namespace FlexApp.Controllers
                 _context.Rooms.Add(room);
                 _context.SaveChanges();
 
-                return Ok("Room successfully created.");
+                return Ok(room.Id);
             }
             catch (Exception ex)
             {
@@ -88,37 +88,37 @@ namespace FlexApp.Controllers
 
 
         //Usuń pokój z grupy
-        [HttpDelete("RemoveRoom")]
-        [Authorize]
-        public IActionResult RemoveRoom(Guid RoomId)
+[HttpDelete("RemoveRoom")]
+[Authorize]
+public IActionResult RemoveRoom(Guid RoomId)
+{
+    try
+    {
+        var room = _context.Rooms.FirstOrDefault(x => x.Id == RoomId);
+        if (room == null)
         {
-            try
-            {
-                var room = _context.Rooms.FirstOrDefault(x => x.Id == RoomId);
-                if (room == null)
-                {
-                    return NotFound("Room not found.");
-                }
-
-                var userId = _userManager.GetUserId(User);
-                // Sprawdź, czy użytkownik należy do grupy, do której należy pokój
-                var isUserInGroup = _context.UsersInGroups
-                                            .Any(x => x.UserId.ToString() == userId && x.GroupId == room.GroupId);
-                if (!isUserInGroup)
-                {
-                    return Unauthorized("You do not have permission to remove this room.");
-                }
-
-                _context.Rooms.Remove(room);
-                _context.SaveChanges();
-
-                return Ok("Room successfully removed.");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return NotFound("Room not found.");
         }
+
+        var userId = _userManager.GetUserId(User);
+        // Sprawdź, czy użytkownik należy do grupy, do której należy pokój
+        var isUserInGroup = _context.UsersInGroups
+                                    .Any(x => x.UserId.ToString() == userId && x.GroupId == room.GroupId);
+        if (!isUserInGroup)
+        {
+            return Unauthorized("You do not have permission to remove this room.");
+        }
+
+        _context.Rooms.Remove(room);
+        _context.SaveChanges();
+
+        return Ok("Room successfully removed.");
+    }
+    catch (Exception ex)
+    {
+        return BadRequest(ex.Message);
+    }
+}
 
 
         //Lista pokoi

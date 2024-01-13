@@ -15,12 +15,7 @@ namespace FlexApp.ViewModels
         public Guid Id { get; set; }
 
         public Guid? RoomId { get; set; }
-        [Display(Name = "Pokój")]
-        public virtual RoomViewModel Room { get; set; }
-
         public Guid CreatedById { get; set; }
-        [Display(Name = "Stworzone przez")]
-        public virtual UserViewModel CreatedBy { get; set; }
 
         [Display(Name = "Powód")]
         public string Reason { get; set; }
