@@ -124,7 +124,7 @@ namespace FlexApp.Controllers
                 _context.Groups.Add(group);
                 _context.SaveChanges(); // Zapisanie zmian w bazie danych
 
-                return Ok(group.Id);
+                return Ok(group);
             }
             catch (Exception ex)
             {

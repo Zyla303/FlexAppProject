@@ -37,11 +37,11 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>()
 
 builder.Services.ConfigureApplicationCookie( options =>
 {
-    // Ustawienie wygaœniêcia pliku cookie na 15 minut
+    // Ustawienie wygaï¿½niï¿½cia pliku cookie na 15 minut
     options.ExpireTimeSpan = TimeSpan.FromMinutes( 15 );
-    options.LoginPath = "/Login"; // Œcie¿ka do Twojego widoku logowania
-    options.LogoutPath = "/Logout"; // Œcie¿ka do Twojego widoku wylogowania
-    options.SlidingExpiration = true; // Odnowienie wygaœniêcia pliku cookie przy aktywnoœci u¿ytkownika
+    options.LoginPath = "/Login"; // ï¿½cieï¿½ka do Twojego widoku logowania
+    options.LogoutPath = "/Logout"; // ï¿½cieï¿½ka do Twojego widoku wylogowania
+    options.SlidingExpiration = true; // Odnowienie wygaï¿½niï¿½cia pliku cookie przy aktywnoï¿½ci uï¿½ytkownika
 } );
 
 var app = builder.Build();
@@ -58,12 +58,21 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseCors(builder =>
+{
+    builder.WithOrigins("https://localhost:5312")
+           .AllowAnyHeader()
+           .AllowAnyMethod()
+           .AllowCredentials();
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}" );
+
 
 var spaPath = "/app";
 if(app.Environment.IsDevelopment())
@@ -72,7 +81,7 @@ if(app.Environment.IsDevelopment())
     {
         client.UseSpa( spa =>
         {
-            spa.UseProxyToSpaDevelopmentServer( "http://localhost:5312" );
+            spa.UseProxyToSpaDevelopmentServer( "https://localhost:5312" );
         } );
     } );
 }

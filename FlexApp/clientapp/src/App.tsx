@@ -1,15 +1,15 @@
-import { FC } from 'react';
-import { LoginPage } from './pages/LoginPage';
-import { HomePage } from './pages/HomePage';
-import './styles/app.scss'
-import { useAppContext } from './context/useAppContext';
+import { FC } from "react";
+import { LoginPage } from "./pages/LoginPage";
+import { HomePage } from "./pages/HomePage";
+import { useAppContext } from "./context/useAppContext";
+import "./styles/app.scss";
 
 export const App: FC = () => {
-    const {loggedUserData} = useAppContext();
+  const { loggedUserData } = useAppContext();
 
-    return (
-        <div className='useless-app-div'>
-            {loggedUserData ? <HomePage/> : <LoginPage/>}
-        </div>
-    )
-}
+  return (
+    <div className="useless-app-div">
+      {loggedUserData ? <HomePage /> : <LoginPage />}
+    </div>
+  );
+};
