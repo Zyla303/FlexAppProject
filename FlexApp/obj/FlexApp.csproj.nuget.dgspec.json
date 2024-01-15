@@ -1,26 +1,33 @@
 {
   "format": 1,
   "restore": {
-    "/Users/pinkevych/projects/FlexAppProject/FlexApp/FlexApp.csproj": {}
+    "D:\\Studia\\ZPI_Project\\FlexApp\\FlexAppProject\\FlexApp\\FlexApp.csproj": {}
   },
   "projects": {
-    "/Users/pinkevych/projects/FlexAppProject/FlexApp/FlexApp.csproj": {
+    "D:\\Studia\\ZPI_Project\\FlexApp\\FlexAppProject\\FlexApp\\FlexApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/pinkevych/projects/FlexAppProject/FlexApp/FlexApp.csproj",
+        "projectUniqueName": "D:\\Studia\\ZPI_Project\\FlexApp\\FlexAppProject\\FlexApp\\FlexApp.csproj",
         "projectName": "FlexApp",
-        "projectPath": "/Users/pinkevych/projects/FlexAppProject/FlexApp/FlexApp.csproj",
-        "packagesPath": "/Users/pinkevych/.nuget/packages/",
-        "outputPath": "/Users/pinkevych/projects/FlexAppProject/FlexApp/obj/",
+        "projectPath": "D:\\Studia\\ZPI_Project\\FlexApp\\FlexAppProject\\FlexApp\\FlexApp.csproj",
+        "packagesPath": "C:\\Users\\zyla3\\.nuget\\packages\\",
+        "outputPath": "D:\\Studia\\ZPI_Project\\FlexApp\\FlexAppProject\\FlexApp\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\DevExpress 21.2\\Components\\Offline Packages",
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/Users/pinkevych/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\zyla3\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\DevExpress 21.2.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
-        "originalTargetFrameworks": [
-          "net6.0"
-        ],
+        "originalTargetFrameworks": ["net6.0"],
         "sources": {
-          "/usr/local/share/dotnet/sdk/7.0.312/Sdks/Microsoft.NET.Sdk.Web/library-packs": {},
+          "C:\\Program Files (x86)\\DevExpress 21.2\\Components\\System\\Components\\Packages": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -30,9 +37,7 @@
           }
         },
         "warningProperties": {
-          "warnAsError": [
-            "NU1605"
-          ]
+          "warnAsError": ["NU1605"]
         }
       },
       "frameworks": {
@@ -101,7 +106,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.312/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.403\\RuntimeIdentifierGraph.json"
         }
       }
     }

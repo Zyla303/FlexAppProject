@@ -97,34 +97,44 @@ namespace FlexApp.Controllers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(Name))
+                if(string.IsNullOrWhiteSpace( Name ))
                 {
-                    return BadRequest("Group name cannot be empty.");
+                    return BadRequest( "Group name cannot be empty." );
                 }
 
-                var userId = _userManager.GetUserId(User);
-                if (userId == null)
+                var userId = _userManager.GetUserId( User );
+                if(userId == null)
                 {
-                    return Unauthorized("User not logged in.");
+                    return Unauthorized( "User not logged in." );
                 }
 
-                var checkIfExist = _context.Groups.FirstOrDefault(x => x.Name == Name);
-                if (checkIfExist != null)
+                var checkIfExist = _context.Groups.FirstOrDefault( x => x.Name == Name );
+                if(checkIfExist != null)
                 {
-                    return BadRequest("Group with this name already exists");
+                    return BadRequest( "Group with this name already exists" );
                 }
 
                 var group = new Group
                 {
                     Name = Name,
-                    CreatedById = Guid.TryParse(userId, out var userGuid) ? userGuid : Guid.Empty,
+                    CreatedById = Guid.TryParse( userId, out var userGuid ) ? userGuid : Guid.Empty,
                     InvitationCode = GenerateInvitationCode()
                 };
 
-                _context.Groups.Add(group);
+                _context.Groups.Add( group );
                 _context.SaveChanges(); // Zapisanie zmian w bazie danych
 
-                return Ok(group);
+                //Dodanie usera ktory tworzy grupę, jako jej member
+                var userInGroupToDB = new UsersInGroups
+                {
+                    UserId = Guid.Parse( userId ),
+                    GroupId = group.Id,
+                    ConfirmParticipation = true
+                };
+                _context.UsersInGroups.Add(userInGroupToDB);
+                _context.SaveChanges();
+
+                return Ok(group.Id);
             }
             catch (Exception ex)
             {
