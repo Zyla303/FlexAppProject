@@ -32,7 +32,7 @@ export const useAuthQueries = ({
     localStorage.setItem("userId", userId);
   };
 
-  const { mutate: login } = useMutation({
+  const login = useMutation({
     mutationFn: (data: Partial<UserData>) => post("/app/login", data),
     onSuccess: (userId: string) => {
       setLocalStorageUserId(userId);

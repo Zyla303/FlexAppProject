@@ -8,6 +8,9 @@ import { faKey, faUser } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "../components/Button";
 import { useAppContext } from "../context/useAppContext";
 import { useAuthQueries } from "../hooks/use-auth-queries";
+import { StatusInfo } from "../components/StatusInfo";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 interface LoginFormValues {
   userName: string;
@@ -22,11 +25,34 @@ interface RegisterFormValues {
   repeatedPassword: string;
 }
 
+const schema = yup
+  .object()
+  .shape({
+    userName: yup.string().required("User Name is required"),
+    firstName: yup.string().required("First Name is required"),
+    lastName: yup.string().required("Last Name is required"),
+    password: yup
+      .string()
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{5,})/,
+        "Must Contain 5 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
+      )
+      .required("Password is required"),
+    repeatedPassword: yup
+      .string()
+      .required("Confirm Password is required")
+      .oneOf([yup.ref("password")], "Passwords do not match"),
+  })
+  .required();
+
 export const LoginPage: FC = () => {
   // juz nie mialem nerwow robic inaczej, sorka
   const [formType, setFormType] = useState<"login" | "register">("login");
   const { authenticateUser, deauthenticateUser } = useAppContext();
-  const { login, register } = useAuthQueries({
+  const {
+    login: { mutate: login, error: loginError },
+    register,
+  } = useAuthQueries({
     onLogin: authenticateUser,
     onLogout: deauthenticateUser,
   });
@@ -37,7 +63,11 @@ export const LoginPage: FC = () => {
   const {
     register: registerFormRegister,
     handleSubmit: registerFormHandleSubmit,
-  } = useForm<RegisterFormValues>();
+    formState: { errors: registerFormErrors, isValid },
+  } = useForm<RegisterFormValues>({
+    mode: "all",
+    resolver: yupResolver(schema),
+  });
 
   const loginOnSubmit = (data: LoginFormValues) => {
     login(data);
@@ -71,6 +101,9 @@ export const LoginPage: FC = () => {
             />
             <u onClick={() => setFormType("register")}>Register now</u>
             <Button label="Login" />
+            {!!loginError && (
+              <StatusInfo status="error" message="Login failed" />
+            )}
           </form>
         </Card>
       )}
@@ -82,23 +115,37 @@ export const LoginPage: FC = () => {
             className="register-form"
             onSubmit={registerFormHandleSubmit(registerOnSubmit)}
           >
-            <Input label="Username" {...registerFormRegister("userName")} />
-            <Input label="First name" {...registerFormRegister("firstName")} />
-            <Input label="Last name" {...registerFormRegister("lastName")} />
+            <Input
+              label="Username"
+              errorMessage={registerFormErrors.userName?.message}
+              {...registerFormRegister("userName")}
+            />
+            <Input
+              label="First name"
+              errorMessage={registerFormErrors.firstName?.message}
+              {...registerFormRegister("firstName")}
+            />
+            <Input
+              label="Last name"
+              errorMessage={registerFormErrors.lastName?.message}
+              {...registerFormRegister("lastName")}
+            />
             <Input
               label="Password"
               type="password"
+              errorMessage={registerFormErrors.password?.message}
               {...registerFormRegister("password")}
             />
             <Input
               label="Repeat password"
               type="password"
+              errorMessage={registerFormErrors.repeatedPassword?.message}
               {...registerFormRegister("repeatedPassword")}
             />
             <u onClick={() => setFormType("login")}>
               Already have an account? Login
             </u>
-            <Button label="Register" />
+            <Button label="Register" disabled={!isValid} />
           </form>
         </Card>
       )}
