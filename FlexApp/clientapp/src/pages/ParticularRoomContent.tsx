@@ -1,122 +1,209 @@
-import { FC } from 'react';
-import { Card } from '../components/Card';
-import { Button } from '../components/Button';
-import '../styles/particular-group-room-content.scss';
-import { ExpandableCard } from '../components/ExpandableCard';
-import { Input } from '../components/Input';
-import { StatusInfo } from '../components/StatusInfo';
-import { TextArea } from '../components/TextArea';
-import { ExpandableRow } from '../components/ExpandableRow';
-import { useForm } from 'react-hook-form';
+import { FC, useState } from "react";
+import { Card } from "../components/Card";
+import { Button } from "../components/Button";
+import "../styles/particular-group-room-content.scss";
+import { ExpandableCard } from "../components/ExpandableCard";
+import { Input } from "../components/Input";
+import { StatusInfo } from "../components/StatusInfo";
+import { TextArea } from "../components/TextArea";
+import { ExpandableRow } from "../components/ExpandableRow";
+import { useForm } from "react-hook-form";
+import { DateTimePicker, DateTimeValidationError } from "@mui/x-date-pickers";
+import dayjs, { Dayjs } from "dayjs";
+import { useAppContext } from "../context/useAppContext";
+import { useReservationQueries } from "../hooks/use-reservation-queries";
+import { useRoomQueries } from "../hooks/use-room-queries";
+import * as utc from "dayjs/plugin/utc";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
 interface BookRoomFormValues {
-    reason: string;
-    description: string;
-    date: string;
+  reason: string;
+  description: string;
 }
+
+dayjs.extend(utc);
+
+const schema = yup
+  .object()
+  .shape({
+    reason: yup.string().required("Reason is required"),
+    description: yup.string().required("Description is required"),
+  })
+  .required();
+
+const createReservationStatusMessages = {
+  idle: {
+    primary: "",
+    secondary: "",
+  },
+  pending: {
+    primary: "",
+    secondary: "",
+  },
+  error: {
+    primary: "Couldn't create new reservation",
+    secondary: "Please pick a different date",
+  },
+  success: { primary: "Reservation created successfully", secondary: "" },
+};
 
 export const ParticularRoomContent: FC = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    reset,
+  } = useForm<BookRoomFormValues>({
+    mode: "all",
+    resolver: yupResolver(schema),
+  });
 
-    const { register, handleSubmit } = useForm<BookRoomFormValues>();
+  const { loggedUserData, chosenRoom, chosenGroup, setChosenRoom } =
+    useAppContext();
 
-    const onSubmit = (data: BookRoomFormValues) => {
-        console.log(data);
-    }
+  const initialDate = dayjs().minute(60).second(0).millisecond(0);
 
-    const reservations = [
-        {
-            date: '03.03.2024',
-            name: 'May Loush',
-            reason: 'Short reason',
-            description: "Short description"
-        },
-        {
-            date: '03.03.2024',
-            name: 'May Loush',
-            reason: 'Longer reason dolor sit amet some other very important stuff',
-            description: "Very long description dolor sir amet lorem ipsum one day i will be an astronaut"
-        },
-        {
-            date: '03.03.2024',
-            name: 'May Loush',
-            reason: 'Longer reason dolor sit amet some other very important stuff',
-            description: "Very long description dolor sir amet lorem ipsum one day i will be an astronaut"
-        }
-    ]
+  const [startDate, setStartDate] = useState<Dayjs | null>(initialDate);
+  const [endDate, setEndDate] = useState<Dayjs | null>(initialDate);
+  const [dateError, setDateError] = useState<DateTimeValidationError>();
 
-    return (
-        <>
-            <Card
-                className='particular-room-top-panel'
-            >
-                 <div className='room-title'> 
-                    <p title='Group name'>
-                        Group name
-                    </p>
-                    <p title='Room name'>
-                        Room name
-                    </p>
-                 </div> 
-                <div className='button-container'>
-                    <Button label="Remove group"/>
-                </div>
-            </Card>
-            
-            <ExpandableCard
-                header="Reservations"
-                defaultState={true}
-                className='reservations-panel'
-            >
-                <i>Click to view full information</i>
-                {reservations.map(reservation => (
-                    <ExpandableRow
-                        {...reservation}
-                    />
-                ))}
-            </ExpandableCard>
+  const {
+    reservations: { data: reservations = [] },
+    createReservation: {
+      mutate: createReservation,
+      status: createReservationStatus,
+    },
+    deleteReservation: { mutate: deleteReservation },
+  } = useReservationQueries(chosenRoom?.id);
 
-            <ExpandableCard
-                header="Book"
-                defaultState={true}
-                className='book-room-panel'
-            >
-                <form 
-                    className='book-room-form'
-                    onSubmit={handleSubmit(onSubmit)}
-                >
-                    <div className='divided-content'>
-                        <div className='left-side'>
-                            <p className='details-text'>Give us details about your booking</p>
-                            <Input
-                                label="Reason"
-                                {...register('reason')}
-                            />
-                            <TextArea
-                                label="Description"
-                                {...register('description')}
-                            />
-                        </div>
+  const {
+    deleteRoom: { mutate: deleteRoom },
+  } = useRoomQueries();
 
-                        <div className='right-side'>
-                            <p className='details-text'>Pick a proper date and time for your booking</p>
-                            <Input
-                                label='Datepicker placeholder'
-                                {...register('date')}
-                            />
-                            <StatusInfo
-                                status='error'
-                                message='Unable to book!'
-                                secondaryMessage='Please pick a different date'
-                            />
-                        </div>
-                    </div>
-                    <Button
-                        className='book-button'
-                        label='Book'
-                    />
-                </form>
+  const handleDeleteRoom = () => {
+    deleteRoom({
+      id: chosenRoom?.id ?? "",
+    });
+    setChosenRoom(undefined);
+  };
 
-            </ExpandableCard>
-        </>
-    )
-}
+  const onSubmit = (data: BookRoomFormValues) => {
+    createReservation({
+      reason: data.reason,
+      description: data.description,
+      roomId: chosenRoom?.id ?? "",
+      dateFrom: startDate?.utc().local().format() ?? "",
+      dateTo: endDate?.utc().local().format() ?? "",
+    });
+    reset();
+  };
+
+  const handleDeleteReservation = (id: string) => {
+    deleteReservation({
+      id: id ?? "",
+    });
+  };
+
+  return (
+    <>
+      <Card className="particular-room-top-panel">
+        <div className="room-title">
+          <p title="Group name">{chosenGroup?.name}</p>
+          <p title="Room name">{chosenRoom?.name}</p>
+        </div>
+        <div className="button-container">
+          <Button label="Remove room" onClick={handleDeleteRoom} />
+        </div>
+      </Card>
+
+      <ExpandableCard
+        header="Reservations"
+        className="reservations-panel"
+        defaultState
+      >
+        {reservations.length > 0 ? (
+          <>
+            <i>Click to view full information</i>
+            {reservations.map((reservation) => (
+              <div key={reservation.id}>
+                <ExpandableRow {...reservation} />
+                {loggedUserData?.id === reservation.createdById && (
+                  <Button
+                    style={{ marginTop: "10px" }}
+                    label="Remove Reservation"
+                    onClick={() => handleDeleteReservation(reservation.id)}
+                  />
+                )}
+              </div>
+            ))}
+          </>
+        ) : (
+          "No reservations found"
+        )}
+      </ExpandableCard>
+
+      <ExpandableCard header="Book" defaultState className="book-room-panel">
+        <form className="book-room-form" onSubmit={handleSubmit(onSubmit)}>
+          <div className="divided-content">
+            <div className="left-side">
+              <p className="details-text">Give us details about your booking</p>
+              <Input
+                label="Reason"
+                errorMessage={errors.reason?.message}
+                {...register("reason")}
+              />
+              <TextArea
+                label="Description"
+                errorMessage={errors.description?.message}
+                {...register("description")}
+              />
+            </div>
+
+            <div className="right-side">
+              <p className="details-text">
+                Pick a proper date and time for your booking
+              </p>
+              <DateTimePicker
+                label="Start Reservation"
+                views={["year", "month", "day", "hours"]}
+                format="DD/MM/YYYY HH:mm"
+                value={startDate}
+                onChange={(date) => setStartDate(date)}
+                minDateTime={initialDate}
+                onError={(error) => setDateError(error)}
+                ampm={false}
+              />
+              <DateTimePicker
+                label="End Reservation"
+                views={["year", "month", "day", "hours"]}
+                format="DD/MM/YYYY HH:mm"
+                value={endDate}
+                onChange={(date) => setEndDate(date)}
+                onError={(error) => setDateError(error)}
+                minDateTime={startDate}
+                ampm={false}
+              />
+              <StatusInfo
+                status={createReservationStatus}
+                message={
+                  createReservationStatusMessages[createReservationStatus]
+                    .primary
+                }
+                secondaryMessage={
+                  createReservationStatusMessages[createReservationStatus]
+                    .secondary
+                }
+              />
+            </div>
+          </div>
+          <Button
+            className="book-button"
+            label="Book"
+            disabled={!isValid || !(Object.keys(dateError ?? {}).length === 0)}
+          />
+        </form>
+      </ExpandableCard>
+    </>
+  );
+};

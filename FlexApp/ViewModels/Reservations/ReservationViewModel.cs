@@ -17,7 +17,7 @@ namespace FlexApp.ViewModels
         public Guid? RoomId { get; set; }
         public Guid CreatedById { get; set; }
 
-        [Display(Name = "Powód")]
+        [Display(Name = "Powï¿½d")]
         public string Reason { get; set; }
 
         [Display(Name = "Opis")]

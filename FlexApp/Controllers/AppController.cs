@@ -112,7 +112,8 @@ namespace FlexApp.Controllers
         }
 
         // Informacje o użytkowniku
-        [HttpGet("GetUserInformations/{UserId}")] 
+        [HttpGet("GetUserInformations/{UserId}")]
+        [Authorize]
         public IActionResult GetUserInformations(Guid userId)  //Działa
         {
             try
