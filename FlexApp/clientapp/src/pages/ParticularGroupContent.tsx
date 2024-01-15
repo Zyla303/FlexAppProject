@@ -9,31 +9,60 @@ import { StatusInfo } from "../components/StatusInfo";
 import profilePic from "../assets/default-profile-pic.png";
 import "../styles/particular-group-room-content.scss";
 import { useGroupQueries } from "../hooks/use-group-queries";
+import { useRoomQueries } from "../hooks/use-room-queries";
+import { useForm } from "react-hook-form";
 
 export const ParticularGroupContent: FC = () => {
-  const { chosenGroupId, setChosenRoomId } = useAppContext();
+  const {
+    chosenGroupId = "",
+    setChosenGroupId,
+    setChosenRoomId,
+  } = useAppContext();
 
   const {
     usersInGroup: { data: usersInGroup = [] },
+    groupInformation: { data: groupInformation },
+    deleteGroup: { mutate: deleteGroup },
   } = useGroupQueries(chosenGroupId);
 
-  const rooms = [
-    "Room 1",
-    "Room 2",
-    "Test room",
-    "Room XYZ",
-    "Best room ever",
-    "Room with too long name lorem ipsum dolor sit amet",
-  ];
+  const {
+    rooms: { data = [] },
+    createRoom: {
+      mutate: createRoom,
+      status: createRoomStatus,
+      error: createRoomError,
+    },
+  } = useRoomQueries(chosenGroupId);
+
+  const { register: registerCreateRoom, handleSubmit: submitCreateRoom } =
+    useForm<{ name: string; roomNumber: string }>();
+
+  const handleCreateRoom = ({
+    name,
+    roomNumber,
+  }: {
+    name: string;
+    roomNumber: string;
+  }) => {
+    createRoom({ name, roomNumber });
+  };
+  const handleRemoveGroup = () => {
+    deleteGroup({
+      id: chosenGroupId,
+    });
+    setChosenGroupId(undefined);
+  };
 
   return (
     <>
       <Card className="particular-group-top-panel">
         <div className="group-title">
-          <p title="Group name too long to display lorem ipsum">Group name</p>
+          <p title="Group name too long to display lorem ipsum">
+            {groupInformation?.name}
+          </p>
         </div>
         <div className="button-container">
-          <Button label="Remove group" />
+          <Button label="Remove group" onClick={handleRemoveGroup} />
         </div>
       </Card>
 
@@ -42,10 +71,14 @@ export const ParticularGroupContent: FC = () => {
         className="group-content-basic-form"
         defaultState
       >
-        <Input label="Room's name" />
+        <Input label="Room name" {...registerCreateRoom("name")} />
+        <Input label="Room number" {...registerCreateRoom("roomNumber")} />
         <div className="button-status-container">
-          <Button label="Create" />
-          <StatusInfo status="success" message="Created sucessfully" />
+          <Button label="Create" onClick={submitCreateRoom(handleCreateRoom)} />
+          <StatusInfo
+            status={createRoomStatus}
+            message={createRoomError?.response?.data as string}
+          />
         </div>
       </ExpandableCard>
 
@@ -54,7 +87,7 @@ export const ParticularGroupContent: FC = () => {
         className="group-code-content"
         defaultState
       >
-        <Pill title="#XYZ123" />
+        <Pill title={groupInformation?.invitationCode} />
       </ExpandableCard>
 
       <ExpandableCard
@@ -78,11 +111,11 @@ export const ParticularGroupContent: FC = () => {
         cardClassName="rooms-card"
         defaultState
       >
-        {rooms.map((room) => (
+        {data.map((room) => (
           <Pill
-            title={room}
-            // TODO wrzucilem tu jedynke na sztywno, trzeba przerzucic odpowiednie ID
-            onClick={() => setChosenRoomId("id")}
+            key={room.id}
+            title={room.name}
+            onClick={() => setChosenRoomId(room.id)}
           />
         ))}
       </ExpandableCard>

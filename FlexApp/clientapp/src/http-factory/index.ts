@@ -46,5 +46,5 @@ export async function put(path = "", params = {}) {
 }
 
 export async function httpDelete(path = "", data = {}) {
-  return request(path, { data, method: HttpRequestTypes.Delete });
+  return request(path, { ...data, method: HttpRequestTypes.Delete });
 }

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { Card } from "../components/Card";
 import { Button } from "../components/Button";
 import "../styles/particular-group-room-content.scss";
@@ -8,6 +8,10 @@ import { StatusInfo } from "../components/StatusInfo";
 import { TextArea } from "../components/TextArea";
 import { ExpandableRow } from "../components/ExpandableRow";
 import { useForm } from "react-hook-form";
+import { DateTimePicker } from "@mui/x-date-pickers";
+import dayjs, { Dayjs } from "dayjs";
+import { useAppContext } from "../context/useAppContext";
+import { useReservationQueries } from "../hooks/use-reservation-queries";
 
 interface BookRoomFormValues {
   reason: string;
@@ -17,33 +21,31 @@ interface BookRoomFormValues {
 
 export const ParticularRoomContent: FC = () => {
   const { register, handleSubmit } = useForm<BookRoomFormValues>();
+  const { chosenRoomId = "" } = useAppContext();
+  const [startDate, setStartDate] = useState<Dayjs | null>(
+    dayjs().set("minutes", 60).set("seconds", 0)
+  );
+  const [endDate, setEndDate] = useState<Dayjs | null>(
+    dayjs().set("minutes", 60).set("seconds", 0)
+  );
+
+  const {
+    reservations: { data: reservations = [] },
+    createReservation: {
+      mutate: createReservation,
+      status: createReservationStatus,
+    },
+  } = useReservationQueries(chosenRoomId);
 
   const onSubmit = (data: BookRoomFormValues) => {
-    console.log(data);
+    createReservation({
+      reason: data.reason,
+      description: data.description,
+      roomId: chosenRoomId,
+      dateFrom: startDate?.toISOString() ?? "",
+      dateTo: endDate?.toISOString() ?? "",
+    });
   };
-
-  const reservations = [
-    {
-      date: "03.03.2024",
-      name: "May Loush",
-      reason: "Short reason",
-      description: "Short description",
-    },
-    {
-      date: "03.03.2024",
-      name: "May Loush",
-      reason: "Longer reason dolor sit amet some other very important stuff",
-      description:
-        "Very long description dolor sir amet lorem ipsum one day i will be an astronaut",
-    },
-    {
-      date: "03.03.2024",
-      name: "May Loush",
-      reason: "Longer reason dolor sit amet some other very important stuff",
-      description:
-        "Very long description dolor sir amet lorem ipsum one day i will be an astronaut",
-    },
-  ];
 
   return (
     <>
@@ -59,8 +61,8 @@ export const ParticularRoomContent: FC = () => {
 
       <ExpandableCard
         header="Reservations"
-        defaultState={true}
         className="reservations-panel"
+        defaultState
       >
         <i>Click to view full information</i>
         {reservations.map((reservation) => (
@@ -68,11 +70,7 @@ export const ParticularRoomContent: FC = () => {
         ))}
       </ExpandableCard>
 
-      <ExpandableCard
-        header="Book"
-        defaultState={true}
-        className="book-room-panel"
-      >
+      <ExpandableCard header="Book" defaultState className="book-room-panel">
         <form className="book-room-form" onSubmit={handleSubmit(onSubmit)}>
           <div className="divided-content">
             <div className="left-side">
@@ -85,9 +83,24 @@ export const ParticularRoomContent: FC = () => {
               <p className="details-text">
                 Pick a proper date and time for your booking
               </p>
-              <Input label="Datepicker placeholder" {...register("date")} />
+              <DateTimePicker
+                label="Start Reservation"
+                views={["year", "month", "day", "hours"]}
+                format="DD/MM/YYYY HH:mm"
+                minDate={dayjs()}
+                value={startDate}
+                onChange={(date) => setStartDate(date)}
+              />
+              <DateTimePicker
+                label="End Reservation"
+                views={["year", "month", "day", "hours"]}
+                format="DD/MM/YYYY HH:mm"
+                minDate={dayjs()}
+                value={endDate}
+                onChange={(date) => setEndDate(date)}
+              />
               <StatusInfo
-                status="error"
+                status={createReservationStatus}
                 message="Unable to book!"
                 secondaryMessage="Please pick a different date"
               />

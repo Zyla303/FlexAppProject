@@ -1,25 +1,30 @@
-import { FC, useState } from 'react';
-import '../styles/expandable-row.scss'
+import { FC, useState } from "react";
+import "../styles/expandable-row.scss";
 
 interface ExpandableRowProps {
-    date: string;
-    name: string;
-    reason: string;
-    description: string;
+  dateFrom: string;
+  dateTo: string;
+  reason: string;
+  description: string;
 }
 
-export const ExpandableRow: FC<ExpandableRowProps> = ({date, name, reason, description}) => {
-    const [isExpanded, setIsExpanded] = useState<boolean>(false);
+export const ExpandableRow: FC<ExpandableRowProps> = ({
+  dateFrom,
+  dateTo,
+  reason,
+  description,
+}) => {
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
-    return (
-        <div 
-            className={`expandable-row ${isExpanded ? 'full' : 'shrinked'}`}
-            onClick={() => setIsExpanded(!isExpanded)}
-        >
-            <p>{date}</p>
-            <p>{name}</p>
-            <p>{reason}</p>
-            <p>{description}</p>
-        </div>
-    )
-}
+  return (
+    <div
+      className={`expandable-row ${isExpanded ? "full" : "shrinked"}`}
+      onClick={() => setIsExpanded(!isExpanded)}
+    >
+      <p>{new Date(dateFrom).toLocaleString()}</p>
+      <p>{new Date(dateTo).toLocaleString()}</p>
+      <p>{reason}</p>
+      <p>{description}</p>
+    </div>
+  );
+};

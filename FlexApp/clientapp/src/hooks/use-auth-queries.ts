@@ -72,7 +72,7 @@ export const useAuthQueries = ({
     },
   });
 
-  const { isSuccess: isLoginSuccess, isLoading: isLoginLoading } = useQuery({
+  const { data, isLoading: isLoginLoading } = useQuery({
     queryKey: ["userInfo", userId],
     queryFn: async ({ queryKey }) => {
       const [, userId] = queryKey;
@@ -85,7 +85,7 @@ export const useAuthQueries = ({
     enabled: !!userId,
   });
 
-  if (!isLoginLoading && !isLoginSuccess) {
+  if (!data && !isLoginLoading) {
     onLogout();
   }
 

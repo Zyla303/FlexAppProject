@@ -17,11 +17,14 @@ namespace FlexApp.ViewModels
         public Guid? RoomId { get; set; }
         public Guid CreatedById { get; set; }
 
-        [Display(Name = "Powód")]
+        [Display(Name = "Powï¿½d")]
         public string Reason { get; set; }
 
         [Display(Name = "Opis")]
         public string Description { get; set; }
+
+        [Display(Name = "Imie uÅ¼ytkownika")]
+        public string CreatedByUserName { get; set; }
 
         [Display(Name = "Data od")]
         public DateTime DateFrom { get; set; }
@@ -37,6 +40,7 @@ namespace FlexApp.ViewModels
                 Id = model.Id,
                 RoomId = model.RoomId,
                 CreatedById = model.CreatedById,
+                CreatedByUserName = model.CreatedByUserName,
                 Reason = model.Reason,
                 Description = model.Description,
                 DateFrom = model.DateFrom,
@@ -49,6 +53,7 @@ namespace FlexApp.ViewModels
             model.Id = Id;
             model.RoomId = RoomId;
             model.CreatedById = CreatedById;
+            model.CreatedByUserName = CreatedByUserName;
             model.Reason = Reason;
             model.Description = Description;
             model.DateFrom = DateFrom;
