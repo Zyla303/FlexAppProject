@@ -49,3 +49,11 @@
 // .button:focus .button-mask.slides-right {
     transform: translate3d(50%, 0, 0);
 }
+
+.disabled {
+    cursor: not-allowed;
+    span {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+}

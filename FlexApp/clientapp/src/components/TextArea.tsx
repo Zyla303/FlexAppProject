@@ -1,28 +1,40 @@
-import { forwardRef } from 'react';
-import '../styles/input.scss';
+import { ChangeEventHandler, FocusEventHandler, forwardRef } from "react";
+import "../styles/input.scss";
 
 export interface InputProps {
   label: string;
   additionalClassNames?: string;
 
-  onChange?: any;
-  onBlur?: any;
+  onChange?: ChangeEventHandler<HTMLTextAreaElement> | undefined;
+  onBlur?: FocusEventHandler<HTMLTextAreaElement> | undefined;
+  errorMessage?: string;
 }
 
-export const TextArea = forwardRef<HTMLTextAreaElement, InputProps>((props, ref): JSX.Element => {
-  const {label, additionalClassNames, onBlur, onChange, ...rest} = props;
+export const TextArea = forwardRef<HTMLTextAreaElement, InputProps>(
+  (
+    {
+      label,
+      additionalClassNames,
+      onBlur,
+      onChange,
+      errorMessage = "",
+      ...rest
+    },
+    ref
+  ): JSX.Element => {
+    return (
+      <div className={`input textarea ${additionalClassNames || ""}`}>
+        <textarea
+          placeholder={label}
+          ref={ref}
+          onChange={onChange}
+          onBlur={onBlur}
+          {...rest}
+        />
+        <span className="error-message">{errorMessage}</span>
+      </div>
+    );
+  }
+);
 
-  return (
-    <div className={`input textarea ${additionalClassNames || ''}`}>
-      <textarea 
-        placeholder={label} 
-        ref={ref} 
-        onChange={onChange}
-        onBlur={onBlur}
-        {...rest}
-      />
-    </div>   
-  )
-})
-
-TextArea.displayName = 'Input';
+TextArea.displayName = "Input";

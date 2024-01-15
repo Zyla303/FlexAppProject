@@ -1,8 +1,13 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { get, post } from "../http-factory";
+import {
+  DefaultError,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { get, httpDelete, post } from "../http-factory";
 import { AxiosError } from "axios";
 
-type Room = {
+export type Room = {
   id: string;
   groupId: string;
   number: string;
@@ -10,6 +15,8 @@ type Room = {
 };
 
 export const useRoomQueries = (groupId?: string) => {
+  const queryClient = useQueryClient();
+
   const rooms = useQuery<Room[]>({
     queryKey: ["rooms", groupId],
     queryFn: ({ queryKey: [, groupId] }) =>
@@ -17,17 +24,8 @@ export const useRoomQueries = (groupId?: string) => {
         params: { groupId },
         baseURL: "https://localhost:7117/workflow",
       }),
+    enabled: !!groupId,
   });
-
-  // const usersInGroup = useQuery<UserData[]>({
-  //   queryKey: ["usersInGroup", groupId],
-  //   queryFn: ({ queryKey: [, groupId] }) =>
-  //     get("/groups/GetUsersInGroups", {
-  //       params: { groupId },
-  //       baseURL: "https://localhost:7117/workflow",
-  //     }),
-  //   enabled: !!groupId,
-  // });
 
   const createRoom = useMutation<
     Room,
@@ -51,19 +49,16 @@ export const useRoomQueries = (groupId?: string) => {
     },
   });
 
-  // const joinGroup = useMutation({
-  //   mutationFn: (code: string) =>
-  //     post(
-  //       "/groups/JoinGroupWithCode",
-  //       {
-  //         code,
-  //       },
-  //       {
-  //         baseURL: "https://localhost:7117/workflow",
-  //       }
-  //     ),
-  // });
+  const deleteRoom = useMutation<Room, DefaultError, Pick<Room, "id">>({
+    mutationFn: ({ id }) =>
+      httpDelete("/room/RemoveRoom", {
+        params: { roomId: id },
+        baseURL: "https://localhost:7117/workflow",
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["rooms"] });
+    },
+  });
 
-  return { rooms, createRoom };
-  // return { groups, createGroup, joinGroup, usersInGroup };
+  return { rooms, createRoom, deleteRoom };
 };

@@ -8,27 +8,49 @@ import { useAppContext } from "../context/useAppContext";
 import { useGroupQueries } from "../hooks/use-group-queries";
 import { useForm } from "react-hook-form";
 
+const createGroupStatusMessages = {
+  idle: "",
+  pending: "",
+  error: "Couldnt create new group",
+  success: "Group created successfully",
+};
+
+const joinGroupStatusMessages = {
+  idle: "",
+  pending: "",
+  error: "Couldnt join this group",
+  success: "Joined successfully",
+};
+
 export const GroupsBasicContent: FC = () => {
   const {
-    groups: { data = [] },
+    groups: { data: groups = [] },
     createGroup: { mutate: createGroup, status: createGroupStatus },
     joinGroup: { mutate: joinGroup, status: joinGroupStatus },
   } = useGroupQueries();
 
-  const { register: registerGroupName, handleSubmit: submitGroupName } =
-    useForm<{ name: string }>();
+  const {
+    register: registerGroupName,
+    handleSubmit: submitGroupName,
+    resetField: resetGroupName,
+  } = useForm<{ name: string }>();
 
-  const { register: registerJoinGroup, handleSubmit: submitJoinGroup } =
-    useForm<{ code: string }>();
+  const {
+    register: registerJoinGroup,
+    handleSubmit: submitJoinGroup,
+    resetField: resetJoinGroup,
+  } = useForm<{ code: string }>();
 
-  const { setChosenGroupId } = useAppContext();
+  const { setChosenGroup } = useAppContext();
 
   const handleCreateGroup = ({ name }: { name: string }) => {
     createGroup({ name });
+    resetGroupName("name");
   };
 
   const handleJoinGroup = ({ code }: { code: string }) => {
     joinGroup(code);
+    resetJoinGroup("code");
   };
 
   return (
@@ -44,7 +66,7 @@ export const GroupsBasicContent: FC = () => {
 
           <StatusInfo
             status={createGroupStatus}
-            message="Couldnt create new group"
+            message={createGroupStatusMessages[createGroupStatus]}
           />
         </div>
       </ExpandableCard>
@@ -57,7 +79,10 @@ export const GroupsBasicContent: FC = () => {
         <Input label="Code" {...registerJoinGroup("code")} />
         <div className="button-status-container">
           <Button label="Join" onClick={submitJoinGroup(handleJoinGroup)} />
-          <StatusInfo status={joinGroupStatus} message="Joined successfully" />
+          <StatusInfo
+            status={joinGroupStatus}
+            message={joinGroupStatusMessages[joinGroupStatus]}
+          />
         </div>
       </ExpandableCard>
 
@@ -67,13 +92,15 @@ export const GroupsBasicContent: FC = () => {
         cardClassName="your-groups-card"
         defaultState
       >
-        {data.map((group) => (
-          <Pill
-            key={group.id}
-            title={group.name}
-            onClick={() => setChosenGroupId(group.id)}
-          />
-        ))}
+        {groups.length > 0
+          ? groups.map((group) => (
+              <Pill
+                key={group.id}
+                title={group.name}
+                onClick={() => setChosenGroup(group)}
+              />
+            ))
+          : "No groups found"}
       </ExpandableCard>
     </>
   );

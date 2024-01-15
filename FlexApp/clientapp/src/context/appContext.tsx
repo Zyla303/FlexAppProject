@@ -1,4 +1,6 @@
 import { createContext, useState, FC, ReactNode } from "react";
+import { Group } from "../hooks/use-group-queries";
+import { Room } from "../hooks/use-room-queries";
 
 export interface UserData {
   userName: string;
@@ -13,14 +15,14 @@ interface AppContextType {
   // TODO zrobilem tak zeby po prostu miec po czym zrobic mockowa autentykacje, jak trzeba zmieniac jakies pola na ID itp to zmieniajcie
   loggedUserData: Partial<UserData> | undefined;
   // TODO jak numbery są złe to sobie zmieńcie na string
-  chosenGroupId: string | undefined;
-  chosenRoomId: string | undefined;
+  chosenGroup: Group | undefined;
+  chosenRoom: Room | undefined;
   chosenView: ViewType;
 
   authenticateUser: (userData: UserData) => void;
   deauthenticateUser: () => void;
-  setChosenGroupId: (id: string | undefined) => void;
-  setChosenRoomId: (id: string | undefined) => void;
+  setChosenGroup: (id: Group | undefined) => void;
+  setChosenRoom: (id: Room | undefined) => void;
   setChosenView: (view: ViewType) => void;
 }
 
@@ -28,13 +30,13 @@ const defaultValues: AppContextType = {
   loggedUserData: undefined,
 
   chosenView: "profile",
-  chosenGroupId: undefined,
-  chosenRoomId: undefined,
+  chosenGroup: undefined,
+  chosenRoom: undefined,
 
   authenticateUser: () => undefined,
   deauthenticateUser: () => undefined,
-  setChosenGroupId: () => undefined,
-  setChosenRoomId: () => undefined,
+  setChosenGroup: () => undefined,
+  setChosenRoom: () => undefined,
   setChosenView: () => undefined,
 };
 
@@ -50,12 +52,8 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({
   const [loggedUserData, setLoggedUserData] = useState<
     Partial<UserData> | undefined
   >(undefined);
-  const [chosenGroupId, setChosenGroupId] = useState<string | undefined>(
-    undefined
-  );
-  const [chosenRoomId, setChosenRoomId] = useState<string | undefined>(
-    undefined
-  );
+  const [chosenGroup, setChosenGroup] = useState<Group | undefined>(undefined);
+  const [chosenRoom, setChosenRoom] = useState<Room | undefined>(undefined);
   const [chosenView, setChosenView] = useState<ViewType>(
     defaultValues.chosenView
   );
@@ -66,8 +64,8 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({
 
   const deauthenticateUser = async () => {
     setLoggedUserData(undefined);
-    setChosenGroupId(undefined);
-    setChosenRoomId(undefined);
+    setChosenGroup(undefined);
+    setChosenRoom(undefined);
     localStorage.removeItem("userId");
   };
 
@@ -75,16 +73,16 @@ export const AppContextProvider: FC<AppContextProviderProps> = ({
     <AppContext.Provider
       value={{
         loggedUserData,
-        chosenGroupId,
-        chosenRoomId,
+        chosenGroup,
+        chosenRoom,
         chosenView,
 
         // login,
         // register,
         authenticateUser,
         deauthenticateUser,
-        setChosenGroupId,
-        setChosenRoomId,
+        setChosenGroup,
+        setChosenRoom,
         setChosenView,
       }}
     >

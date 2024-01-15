@@ -51,12 +51,23 @@
             justify-content: center;
             width: 100%;
         }
-        .input {
+        .input-container {
             width: 75%;
+            text-align: center;
+            .error-message {
+                color: red;
+                font-size: 0.8em;
+                margin: 0;
+            }
             &:first-of-type,
             &:last-of-type {
                 margin-bottom: 1em;
             }
+        }
+        .response-error {
+            color: red;
+            font-size: 0.8em;
+            margin: 0;
         }
     }
 }

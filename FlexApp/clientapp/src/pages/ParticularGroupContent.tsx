@@ -12,27 +12,27 @@ import { useGroupQueries } from "../hooks/use-group-queries";
 import { useRoomQueries } from "../hooks/use-room-queries";
 import { useForm } from "react-hook-form";
 
+const createRoomStatusMessages = {
+  idle: "",
+  pending: "",
+  error: "Couldn't create room",
+  success: "Room created successfully",
+};
+
 export const ParticularGroupContent: FC = () => {
-  const {
-    chosenGroupId = "",
-    setChosenGroupId,
-    setChosenRoomId,
-  } = useAppContext();
+  const { loggedUserData, chosenGroup, setChosenGroup, setChosenRoom } =
+    useAppContext();
 
   const {
     usersInGroup: { data: usersInGroup = [] },
     groupInformation: { data: groupInformation },
     deleteGroup: { mutate: deleteGroup },
-  } = useGroupQueries(chosenGroupId);
+  } = useGroupQueries(chosenGroup?.id);
 
   const {
-    rooms: { data = [] },
-    createRoom: {
-      mutate: createRoom,
-      status: createRoomStatus,
-      error: createRoomError,
-    },
-  } = useRoomQueries(chosenGroupId);
+    rooms: { data: rooms = [] },
+    createRoom: { mutate: createRoom, status: createRoomStatus },
+  } = useRoomQueries(chosenGroup?.id);
 
   const { register: registerCreateRoom, handleSubmit: submitCreateRoom } =
     useForm<{ name: string; roomNumber: string }>();
@@ -48,9 +48,9 @@ export const ParticularGroupContent: FC = () => {
   };
   const handleRemoveGroup = () => {
     deleteGroup({
-      id: chosenGroupId,
+      id: chosenGroup?.id ?? "",
     });
-    setChosenGroupId(undefined);
+    setChosenGroup(undefined);
   };
 
   return (
@@ -61,9 +61,11 @@ export const ParticularGroupContent: FC = () => {
             {groupInformation?.name}
           </p>
         </div>
-        <div className="button-container">
-          <Button label="Remove group" onClick={handleRemoveGroup} />
-        </div>
+        {loggedUserData?.id === chosenGroup?.createdById && (
+          <div className="button-container">
+            <Button label="Remove group" onClick={handleRemoveGroup} />
+          </div>
+        )}
       </Card>
 
       <ExpandableCard
@@ -77,7 +79,7 @@ export const ParticularGroupContent: FC = () => {
           <Button label="Create" onClick={submitCreateRoom(handleCreateRoom)} />
           <StatusInfo
             status={createRoomStatus}
-            message={createRoomError?.response?.data as string}
+            message={createRoomStatusMessages[createRoomStatus]}
           />
         </div>
       </ExpandableCard>
@@ -111,13 +113,15 @@ export const ParticularGroupContent: FC = () => {
         cardClassName="rooms-card"
         defaultState
       >
-        {data.map((room) => (
-          <Pill
-            key={room.id}
-            title={room.name}
-            onClick={() => setChosenRoomId(room.id)}
-          />
-        ))}
+        {rooms.length > 0
+          ? rooms.map((room) => (
+              <Pill
+                key={room.id}
+                title={room.name}
+                onClick={() => setChosenRoom(room)}
+              />
+            ))
+          : "No rooms found"}
       </ExpandableCard>
     </>
   );

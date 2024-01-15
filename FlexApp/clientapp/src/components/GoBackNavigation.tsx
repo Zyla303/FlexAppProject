@@ -1,32 +1,23 @@
-import { FC } from 'react';
+import { FC } from "react";
 import { useAppContext } from "../context/useAppContext";
 //import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //import { faAnglesLeft } from '@fortawesome/free-solid-svg-icons';
-import { Card } from './Card';
+import { Card } from "./Card";
 
 export const GoBackNavigation: FC = () => {
+  const { chosenGroup, setChosenGroup, chosenRoom, setChosenRoom } =
+    useAppContext();
 
-    const {chosenGroupId, setChosenGroupId, chosenRoomId, setChosenRoomId} = useAppContext();
+  const goBack = () => {
+    if (!chosenGroup?.id && !chosenRoom?.id) return;
+    if (chosenGroup?.id && !chosenRoom?.id) setChosenGroup(undefined);
+    if (chosenGroup?.id && chosenRoom?.id) setChosenRoom(undefined);
+  };
 
-
-    const goBack = () => {
-        if (!chosenGroupId && !chosenRoomId)
-            return;
-        if (chosenGroupId && !chosenRoomId)
-            setChosenGroupId(null);
-        if (chosenGroupId && chosenRoomId)
-            setChosenRoomId(null);
-    }
-
-    return (
-        <Card
-            className='go-back-navigation'
-            onClick={() => goBack()}
-        >
-{/*            <FontAwesomeIcon icon={faAnglesLeft}/>*/}
-            <p>
-                Go back
-            </p>
-        </Card>
-    )
-}
+  return (
+    <Card className="go-back-navigation" onClick={() => goBack()}>
+      {/*            <FontAwesomeIcon icon={faAnglesLeft}/>*/}
+      <p>Go back</p>
+    </Card>
+  );
+};

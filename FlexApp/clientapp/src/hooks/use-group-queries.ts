@@ -7,7 +7,7 @@ import {
 import { get, httpDelete, post } from "../http-factory";
 import { UserData } from "../context/appContext";
 
-type Group = {
+export type Group = {
   createdBy: string | null;
   createdById: string;
   id: string;
@@ -57,6 +57,9 @@ export const useGroupQueries = (groupId?: string) => {
           baseURL: "https://localhost:7117/workflow",
         }
       ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["groups"] });
+    },
   });
 
   const deleteGroup = useMutation<Group, DefaultError, Pick<Group, "id">>({

@@ -6,13 +6,13 @@ import { ParticularGroupContent } from "./ParticularGroupContent";
 import { ParticularRoomContent } from "./ParticularRoomContent";
 
 export const GroupsContent: FC = () => {
-  const { chosenGroupId, chosenRoomId } = useAppContext();
+  const { chosenGroup, chosenRoom } = useAppContext();
 
   return (
     <div className="groups-content">
-      {!chosenGroupId && !chosenRoomId && <GroupsBasicContent />}
-      {chosenGroupId && !chosenRoomId && <ParticularGroupContent />}
-      {chosenGroupId && chosenRoomId && <ParticularRoomContent />}
+      {!chosenGroup?.id && !chosenRoom?.id && <GroupsBasicContent />}
+      {chosenGroup?.id && !chosenRoom?.id && <ParticularGroupContent />}
+      {chosenGroup?.id && chosenRoom?.id && <ParticularRoomContent />}
     </div>
   );
 };

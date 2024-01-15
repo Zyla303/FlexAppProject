@@ -9,11 +9,12 @@ export interface InputProps {
   borderStyle?: "underline" | "full";
   onChange?: ChangeEventHandler<HTMLInputElement>;
   onBlur?: FocusEventHandler<HTMLInputElement>;
+  errorMessage?: string;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  (props, ref): JSX.Element => {
-    const {
+  (
+    {
       label,
       icon,
       className,
@@ -21,21 +22,26 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       onBlur,
       onChange,
       borderStyle = "full",
+      errorMessage = "",
       ...rest
-    } = props;
-
+    },
+    ref
+  ): JSX.Element => {
     return (
-      <div className={`input ${borderStyle} ${className || ""}`}>
-        {icon}
-        <input
-          className={`${icon ? "icon" : "no-icon"}`}
-          placeholder={label}
-          ref={ref}
-          onChange={onChange}
-          onBlur={onBlur}
-          type={type}
-          {...rest}
-        />
+      <div className="input-container">
+        <div className={`input ${borderStyle} ${className || ""}`}>
+          {icon}
+          <input
+            className={`${icon ? "icon" : "no-icon"}`}
+            placeholder={label}
+            ref={ref}
+            onChange={onChange}
+            onBlur={onBlur}
+            type={type}
+            {...rest}
+          />
+        </div>
+        <span className="error-message">{errorMessage}</span>
       </div>
     );
   }

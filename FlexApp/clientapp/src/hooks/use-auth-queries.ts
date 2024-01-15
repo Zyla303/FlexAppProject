@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { get, post, put } from "../http-factory";
 import { UserData } from "../context/appContext";
+import { AxiosError } from "axios";
 
 interface RegisterFormValues {
   userName: string;
@@ -56,7 +57,11 @@ export const useAuthQueries = ({
     },
   });
 
-  const { mutate: changePassword } = useMutation({
+  const changePassword = useMutation<
+    ChangePassword,
+    AxiosError,
+    ChangePassword
+  >({
     mutationFn: ({ userId, currentPassword, newPassword }: ChangePassword) =>
       put("/app/ChangeUserPassword", {
         userId,
@@ -72,7 +77,7 @@ export const useAuthQueries = ({
     },
   });
 
-  const { data, isLoading: isLoginLoading } = useQuery({
+  const { isLoading: isLoginLoading, isError } = useQuery({
     queryKey: ["userInfo", userId],
     queryFn: async ({ queryKey }) => {
       const [, userId] = queryKey;
@@ -82,11 +87,13 @@ export const useAuthQueries = ({
 
       return userData;
     },
+
     enabled: !!userId,
+    retry: false,
   });
 
-  if (!data && !isLoginLoading) {
-    onLogout();
+  if (isError && !isLoginLoading) {
+    localStorage.removeItem("userId");
   }
 
   return { login, logout, register, changePassword };

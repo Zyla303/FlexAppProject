@@ -8,7 +8,6 @@ namespace FlexApp.Models
         public virtual Room Room { get; set; }
 
         public Guid CreatedById { get; set; }
-        public string CreatedByUserName { get; set; }
         public virtual User CreatedBy { get; set; }
 
         public string Reason { get; set; }

@@ -23,9 +23,6 @@ namespace FlexApp.ViewModels
         [Display(Name = "Opis")]
         public string Description { get; set; }
 
-        [Display(Name = "Imie użytkownika")]
-        public string CreatedByUserName { get; set; }
-
         [Display(Name = "Data od")]
         public DateTime DateFrom { get; set; }
 
@@ -40,7 +37,6 @@ namespace FlexApp.ViewModels
                 Id = model.Id,
                 RoomId = model.RoomId,
                 CreatedById = model.CreatedById,
-                CreatedByUserName = model.CreatedByUserName,
                 Reason = model.Reason,
                 Description = model.Description,
                 DateFrom = model.DateFrom,
@@ -53,7 +49,6 @@ namespace FlexApp.ViewModels
             model.Id = Id;
             model.RoomId = RoomId;
             model.CreatedById = CreatedById;
-            model.CreatedByUserName = CreatedByUserName;
             model.Reason = Reason;
             model.Description = Description;
             model.DateFrom = DateFrom;

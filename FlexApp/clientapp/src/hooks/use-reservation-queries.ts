@@ -1,5 +1,10 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { get, post } from "../http-factory";
+import {
+  DefaultError,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { get, httpDelete, post } from "../http-factory";
 import { AxiosError } from "axios";
 
 type Reservation = {
@@ -13,6 +18,8 @@ type Reservation = {
 };
 
 export const useReservationQueries = (roomId?: string) => {
+  const queryClient = useQueryClient();
+
   const reservations = useQuery<Reservation[]>({
     queryKey: ["reservations", roomId],
     queryFn: ({ queryKey: [, roomId] }) =>
@@ -21,16 +28,6 @@ export const useReservationQueries = (roomId?: string) => {
         baseURL: "https://localhost:7117/workflow",
       }),
   });
-
-  // const usersInGroup = useQuery<UserData[]>({
-  //   queryKey: ["usersInGroup", groupId],
-  //   queryFn: ({ queryKey: [, groupId] }) =>
-  //     get("/groups/GetUsersInGroups", {
-  //       params: { groupId },
-  //       baseURL: "https://localhost:7117/workflow",
-  //     }),
-  //   enabled: !!groupId,
-  // });
 
   const createReservation = useMutation<
     Reservation,
@@ -51,5 +48,20 @@ export const useReservationQueries = (roomId?: string) => {
     },
   });
 
-  return { reservations, createReservation };
+  const deleteReservation = useMutation<
+    Reservation,
+    DefaultError,
+    Pick<Reservation, "id">
+  >({
+    mutationFn: ({ id: reservationId }) =>
+      httpDelete("/Reservations/RemoveReservation", {
+        params: { reservationId },
+        baseURL: "https://localhost:7117/workflow",
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["reservations"] });
+    },
+  });
+
+  return { reservations, createReservation, deleteReservation };
 };
